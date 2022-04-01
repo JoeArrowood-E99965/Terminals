@@ -200,19 +200,21 @@
 //            screen width. Added ParseHelp for /?.
 //    11/23/2004 Added support for default values.
 //////////////////////////////////////////////////////////////////////////////
+
 namespace Terminals.CommandLine
 {
     using System;
-    using System.Diagnostics;
-    using System.Reflection;
-    using System.Collections;
     using System.IO;
     using System.Text;
+    using System.Reflection;
+    using System.Diagnostics;
+    using System.Collections;
     using System.Runtime.InteropServices;
 
     /// <summary>
     /// Used to control parsing of command line arguments.
     /// </summary>
+    
     [Flags]    
     public enum ArgumentType
     {
@@ -258,6 +260,7 @@ namespace Terminals.CommandLine
     /// Attach this attribute to instance fields of types used
     /// as the destination of command line argument parsing.
     /// </summary>
+   
     [AttributeUsage(AttributeTargets.Field)]
     public class ArgumentAttribute : Attribute
     {
@@ -354,6 +357,7 @@ namespace Terminals.CommandLine
     /// instances. The LongName property is used for usage text only and
     /// does not affect the usage of the argument.
     /// </summary>
+    
     [AttributeUsage(AttributeTargets.Field)]
     public class DefaultArgumentAttribute : ArgumentAttribute
     {
@@ -370,6 +374,7 @@ namespace Terminals.CommandLine
     /// <summary>
     /// A delegate used in error reporting.
     /// </summary>
+    
     public delegate void ErrorReporter(string message);
 
     /// <summary>
@@ -396,6 +401,7 @@ namespace Terminals.CommandLine
     /// Arguments which are array types are collection arguments. Collection
     /// arguments can be specified multiple times.
     /// </summary>
+    
     public sealed class Parser
     {
         /// <summary>
@@ -994,9 +1000,10 @@ namespace Terminals.CommandLine
                     currentArg.Length = 0;
                 }
             }
-            catch (System.IndexOutOfRangeException exc)
+            catch (IndexOutOfRangeException /*exc*/)
             {
                 // got EOF 
+
                 if (inQuotes)
                 {
                     string msg = string.Format("Error: Unbalanced '\"' in command line argument file '{0}'", fileName);
@@ -1006,6 +1013,7 @@ namespace Terminals.CommandLine
                 else if (currentArg.Length > 0)
                 {
                     // valid argument can be terminated by EOF
+
                     argArray.Add(currentArg.ToString());
                 }
             }

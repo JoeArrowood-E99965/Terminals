@@ -1,13 +1,15 @@
 using System.Drawing;
 using System.Windows.Forms;
-using Terminals.Common.Properties;
+
 using Terminals.Data;
+using Terminals.Common.Properties;
 
 namespace Terminals.Connections
 {
     public class Connection : Control, IConnection
     {
         // cached images, bad performace, but simplifies check, if the image is known
+
         public static readonly Image Terminalsicon = Resources.terminalsicon;
 
         public delegate void LogHandler(string entry);
@@ -26,15 +28,17 @@ namespace Terminals.Connections
         }
 
         /// <summary>
-        /// Gets or sets the associated favorite.
-        /// If the connection is virtual, it doesnt have any favorite, so it can be null.
+        ///     Gets or sets the associated favorite.
+        ///     If the connection is virtual, it doesnt have any favorite, so it can be null.
         /// </summary>
+        
         public IFavorite Favorite { get; set; }
 
         /// <summary>
-        /// Gets or sets the original Favorite used create this connection.
-        /// It can be null in case Adhoc connection, which user doesnt want to save.
+        ///     Gets or sets the original Favorite used create this connection.
+        ///     It can be null in case Adhoc connection, which user doesnt want to save.
         /// </summary>
+        
         public IFavorite OriginFavorite { get; set; }
 
 
@@ -43,10 +47,11 @@ namespace Terminals.Connections
         public IGuardedCredentialFactory CredentialFactory { get; set; }
         
         /// <summary>
-        /// Create this control doesnt mean to open the connection.
-        /// Use explicit call instead. Because there may be related resources, 
-        /// call Dispose to close the connection to prevent memory leak.
+        ///     Create this control doesnt mean to open the connection.
+        ///     Use explicit call instead. Because there may be related resources, 
+        ///     call Dispose to close the connection to prevent memory leak.
         /// </summary>
+        
         public virtual bool Connect()
         {
             return true;
