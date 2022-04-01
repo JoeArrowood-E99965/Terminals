@@ -21,7 +21,6 @@ using IMsTscAxEvents_OnWarningEventHandler = AxMSTSCLib.IMsTscAxEvents_OnWarning
 //http://msdn.microsoft.com/en-us/library/bb892063(v=VS.85).aspx
 //http://msdn.microsoft.com/en-us/library/ee338625(v=VS.85).aspx
 
-
 namespace Terminals.Connections
 {
     internal class RDPConnection : Connection, IConnectionExtra, ISettingsConsumer, IHandleKeyboardInput
@@ -34,350 +33,453 @@ namespace Terminals.Connections
 
         private readonly RdpService service = new RdpService();
 
-        public TerminalServer Server { get{ return this.service.Server; } }
+        public TerminalServer Server { get { return service.Server; } }
 
-        public bool IsTerminalServer { get { return this.service.IsTerminalServer; } }
+        public bool IsTerminalServer { get { return service.IsTerminalServer; } }
 
         public IConnectionSettings Settings { get; set; }
 
         public bool GrabInput { get; set; }
 
-        #region IConnectionExtra
+        // ------------------------------------------------
 
         bool IConnectionExtra.FullScreen
         {
             get
             {
-                if (this.client != null)
-                    return this.client.FullScreen;
+                if(client != null)
+                {
+                    return client.FullScreen;
+                }
 
                 return false;
             }
             set
             {
-                if (this.client != null)
-                    this.client.FullScreen = value;
+                if(client != null)
+                {
+                    client.FullScreen = value;
+                }
             }
         }
+
+        // ------------------------------------------------
 
         string IConnectionExtra.Server
         {
             get
             {
-                if (this.client != null)
-                    return this.client.Server;
+                if(client != null)
+                {
+                    return client.Server;
+                }
+
                 return String.Empty;
             }
         }
+
+        // ------------------------------------------------
 
         string IConnectionExtra.UserName
         {
             get
             {
-                if (this.client != null)
-                    return this.client.UserName;
+                if(client != null)
+                {
+                    return client.UserName;
+                }
+
                 return String.Empty;
             }
         }
+
+        // ------------------------------------------------
 
         string IConnectionExtra.Domain
         {
             get
             {
-                if (this.client != null)
-                    return this.client.Domain;
+                if(client != null)
+                {
+                    return client.Domain;
+                }
+
                 return String.Empty;
             }
         }
+
+        // ------------------------------------------------
 
         bool IConnectionExtra.ConnectToConsole
         {
             get
             {
-                if (this.client != null)
-                    return this.client.AdvancedSettings3.ConnectToServerConsole;
+                if(client != null)
+                {
+                    return client.AdvancedSettings3.ConnectToServerConsole;
+                }
 
                 return false;
             }
         }
+
+        // ------------------------------------------------
 
         bool IFocusable.ContainsFocus
         {
             get
             {
-                if (this.client != null)
-                  return this.client.ContainsFocus;
+                if(client != null)
+                {
+                    return client.ContainsFocus;
+                }
 
                 return false;
             }
         }
 
+        // ------------------------------------------------
+
         void IFocusable.Focus()
         {
-            if (this.client != null)
-                this.client.Focus();
+            if(client != null)
+            {
+                client.Focus();
+            }
         }
 
-        #endregion
+        // ------------------------------------------------
 
         private bool ClientConnected
         {
             get
             {
-                if (this.client != null) 
-                    return Convert.ToBoolean(this.client.Connected);
+                if(client != null)
+                {
+                    return Convert.ToBoolean(client.Connected);
+                }
 
                 return false;
             }
         }
 
-        #region IConnection Members
+        // ------------------------------------------------
 
         public override bool Connected
         {
             get
             {
                 // dont let the connection to close with running reconnection
-                return this.ClientConnected || this.connectionStateDetector.IsRunning;
+                
+                return ClientConnected || connectionStateDetector.IsRunning;
             }
         }
+
+        // ------------------------------------------------
 
         public override bool Connect()
         {
             try
             {
-                if (!this.InitializeClientControl())
+                if(!InitializeClientControl())
+                {
                     return false;
-                this.ConfigureCientUserControl();
-                this.ChangeDesktopSize(this.Favorite.Display.DesktopSize);
+                }
+
+                ConfigureCientUserControl();
+                ChangeDesktopSize(Favorite.Display.DesktopSize);
 
                 try
                 {
-                    this.client.ConnectingText = "Connecting. Please wait...";
-                    this.client.DisconnectedText = "Disconnecting...";
+                    client.ConnectingText = "Connecting. Please wait...";
+                    client.DisconnectedText = "Disconnecting...";
 
-                    var rdpOptions = this.Favorite.ProtocolProperties as RdpOptions;
-                    this.ConfigureColorsDepth();
-                    this.ConfigureRedirectedDrives(rdpOptions);
-                    this.ConfigureInterface(rdpOptions);
-                    this.ConfigureStartBehaviour(rdpOptions);
-                    this.ConfigureTimeouts(rdpOptions);
-                    this.ConfigureRedirectOptions(rdpOptions);
-                    this.ConfigureConnectionBar(rdpOptions);
-                    this.ConfigureTsGateway(rdpOptions);
-                    this.ConfigureSecurity(rdpOptions);
-                    this.ConfigureConnection(rdpOptions);
-                    this.AssignEventHandlers();
+                    var rdpOptions = Favorite.ProtocolProperties as RdpOptions;
 
-                    this.Text = "Connecting to RDP Server...";
+                    ConfigureColorsDepth();
+                    ConfigureRedirectedDrives(rdpOptions);
+                    ConfigureInterface(rdpOptions);
+                    ConfigureStartBehaviour(rdpOptions);
+                    ConfigureTimeouts(rdpOptions);
+                    ConfigureRedirectOptions(rdpOptions);
+                    ConfigureConnectionBar(rdpOptions);
+                    ConfigureTsGateway(rdpOptions);
+                    ConfigureSecurity(rdpOptions);
+                    ConfigureConnection(rdpOptions);
+                    AssignEventHandlers();
+
+                    Text = "Connecting to RDP Server...";
                 }
-                catch (Exception exc)
+                catch(Exception exc)
                 {
                     Logging.Info("There was an exception setting an RDP Value.", exc);
                 }
+                
                 // if next line fails on Protected memory access exception,
                 // some string property is set to null, which leads to this exception
-                this.client.Connect();
+            
+                client.Connect();
 
-                this.service.CheckForTerminalServer(this.Favorite);
+                service.CheckForTerminalServer(Favorite);
                 return true;
             }
-            catch (Exception exc)
+            catch(Exception exc)
             {
                 Logging.Fatal("Connecting to RDP", exc);
                 return false;
             }
         }
 
+        // ------------------------------------------------
+
         private bool InitializeClientControl()
         {
             try
             {
-                this.client = new AxMsRdpClient6NotSafeForScripting();
+                client = new AxMsRdpClient6NotSafeForScripting();
             }
-            catch (Exception exception)
+            catch(Exception exception)
             {
                 string message = "Please update your RDP client to at least version 6.";
                 Logging.Info(message, exception);
                 MessageBox.Show(message);
                 return false;
             }
+            
             return true;
         }
 
+        // ------------------------------------------------
+
         private void ConfigureCientUserControl()
         {
-            var clientControl = (Control)this.client;
-            this.Controls.Add(clientControl);
-            this.client.CreateControl();
-            this.nonScriptable = this.client.GetOcx() as IMsRdpClientNonScriptable4;
-            this.client.BringToFront();
-            this.BringToFront();
-            this.client.Parent = this.Parent;
-            this.client.AllowDrop = true;
-            this.client.Dock = DockStyle.Fill;
-            this.ConfigureReconnect();
+            var clientControl = (Control)client;
+            Controls.Add(clientControl);
+            client.CreateControl();
+            nonScriptable = client.GetOcx() as IMsRdpClientNonScriptable4;
+            client.BringToFront();
+            BringToFront();
+            client.Parent = Parent;
+            client.AllowDrop = true;
+            client.Dock = DockStyle.Fill;
+            ConfigureReconnect();
         }
+
+        // ------------------------------------------------
 
         private void ConfigureReconnect()
         {
             // if not added to the client control controls collection, then it isnt visible
-            var clientControl = (Control)this.client;
-            clientControl.Controls.Add(this.reconecting);
-            this.reconecting.Hide();
-            this.reconecting.AbortReconnectRequested += new EventHandler(this.Recoonecting_AbortReconnectRequested);
-            this.connectionStateDetector.AssignFavorite(this.Favorite);
-            this.connectionStateDetector.ReconnectExpired += this.ConnectionStateDetectorOnReconnectExpired;
-            this.connectionStateDetector.Reconnected += this.ConnectionStateDetectorOnReconnected;
+            
+            var clientControl = (Control)client;
+            clientControl.Controls.Add(reconecting);
+            reconecting.Hide();
+            reconecting.AbortReconnectRequested += new EventHandler(Recoonecting_AbortReconnectRequested);
+            connectionStateDetector.AssignFavorite(Favorite);
+            connectionStateDetector.ReconnectExpired += ConnectionStateDetectorOnReconnectExpired;
+            connectionStateDetector.Reconnected += ConnectionStateDetectorOnReconnected;
         }
+
+        // ------------------------------------------------
 
         private void ConnectionStateDetectorOnReconnected(object sender, EventArgs eventArgs)
         {
-            if (this.reconecting.InvokeRequired)
-                this.reconecting.Invoke(new EventHandler(this.ConnectionStateDetectorOnReconnected), new object[] { sender, eventArgs });
+            if(reconecting.InvokeRequired)
+            {
+                reconecting.Invoke(new EventHandler(ConnectionStateDetectorOnReconnected), new object[] { sender, eventArgs });
+            }
             else
-                this.Reconnect();
+            {
+                Reconnect();
+            }
         }
+
+        // ------------------------------------------------
 
         private void Reconnect()
         {
-            if (!this.reconecting.Reconnect)
-                return;
-            this.StopReconnect();
-            this.reconecting.Reconnect = false;
-            this.client.Connect();
+            if(!reconecting.Reconnect) return;
+            StopReconnect();
+            reconecting.Reconnect = false;
+            client.Connect();
         }
+
+        // ------------------------------------------------
 
         private void ConnectionStateDetectorOnReconnectExpired(object sender, EventArgs eventArgs)
         {
-            this.CancelReconnect();
+            CancelReconnect();
         }
+
+        // ------------------------------------------------
 
         private void Recoonecting_AbortReconnectRequested(object sender, EventArgs e)
         {
-            this.CancelReconnect();
+            CancelReconnect();
         }
+
+        // ------------------------------------------------
 
         private void CancelReconnect()
         {
-            if (this.reconecting.InvokeRequired)
+            if(reconecting.InvokeRequired)
             {
-                this.reconecting.Invoke(new Action(this.CancelReconnect));
+                reconecting.Invoke(new Action(CancelReconnect));
             }
             else
             {
-                this.StopReconnect();
-                this.FireDisconnected();
+                StopReconnect();
+                FireDisconnected();
             }
         }
+
+        // ------------------------------------------------
 
         private void StopReconnect()
         {
-            this.connectionStateDetector.Stop();
-            this.reconecting.Hide();
-            if (this.reconecting.Disable)
-                this.Settings.AskToReconnect = false;
+            connectionStateDetector.Stop();
+            reconecting.Hide();
+            
+            if(reconecting.Disable)
+            {
+                Settings.AskToReconnect = false;
+            }
         }
+
+        // ------------------------------------------------
 
         public override void ChangeDesktopSize(DesktopSize desktopSize)
         {
-            Size size = DesktopSizeCalculator.GetSize(this, this.Favorite);
+            Size size = DesktopSizeCalculator.GetSize(this, Favorite);
 
             try
             {
-                switch (desktopSize)
+                switch(desktopSize)
                 {
                     case DesktopSize.AutoScale:
                     case DesktopSize.FitToWindow:
-                        this.client.AdvancedSettings3.SmartSizing = true;
+                        client.AdvancedSettings3.SmartSizing = true;
                         break;
+                
                     case DesktopSize.FullScreen:
-                        this.client.FullScreen = true;
+                        client.FullScreen = true;
                         break;
                 }
 
-                this.client.DesktopWidth = size.Width;
-                this.client.DesktopHeight = size.Height;
+                client.DesktopWidth = size.Width;
+                client.DesktopHeight = size.Height;
             }
-            catch (Exception exc)
+            catch(Exception exc)
             {
                 Logging.Error("Error trying to set the desktop dimensions", exc);
             }
         }
 
+        // ------------------------------------------------
+
         private void ConfigureColorsDepth()
         {
-            switch (this.Favorite.Display.Colors)
+            switch(Favorite.Display.Colors)
             {
                 case Colors.Bits8:
-                    this.client.ColorDepth = 8;
+                    client.ColorDepth = 8;
                     break;
+                
                 case Colors.Bit16:
-                    this.client.ColorDepth = 16;
+                    client.ColorDepth = 16;
                     break;
+                
                 case Colors.Bits24:
-                    this.client.ColorDepth = 24;
+                    client.ColorDepth = 24;
                     break;
+             
                 case Colors.Bits32:
-                    this.client.ColorDepth = 32;
+                    client.ColorDepth = 32;
                     break;
             }
         }
 
+        // ------------------------------------------------
+
         private void ConfigureRedirectedDrives(RdpOptions rdpOptions)
         {
-            if (rdpOptions.Redirect.Drives.Count > 0 && rdpOptions.Redirect.Drives[0].Equals("true"))
-                this.client.AdvancedSettings2.RedirectDrives = true;
+            if(rdpOptions.Redirect.Drives.Count > 0 && rdpOptions.Redirect.Drives[0].Equals("true"))
+            {
+                client.AdvancedSettings2.RedirectDrives = true;
+            }
             else
             {
-                for (int i = 0; i < this.nonScriptable.DriveCollection.DriveCount; i++)
+                for(int i = 0; i < nonScriptable.DriveCollection.DriveCount; i++)
                 {
-                    IMsRdpDrive drive = this.nonScriptable.DriveCollection.get_DriveByIndex((uint)i);
-                    foreach (string str in rdpOptions.Redirect.Drives)
+                    IMsRdpDrive drive = nonScriptable.DriveCollection.get_DriveByIndex((uint)i);
+
+                    foreach(string str in rdpOptions.Redirect.Drives)
                     {
-                        if (drive.Name.IndexOf(str) > -1)
+                        if(drive.Name.IndexOf(str) > -1)
                             drive.RedirectionState = true;
                     }
                 }
             }
         }
 
+        // ------------------------------------------------
+
         private void ConfigureInterface(RdpOptions rdpOptions)
         {
             //advanced settings
             //bool, 0 is false, other is true
-            if (rdpOptions.UserInterface.AllowBackgroundInput)
-                this.client.AdvancedSettings.allowBackgroundInput = -1;
+            
+            if(rdpOptions.UserInterface.AllowBackgroundInput)
+            {
+                client.AdvancedSettings.allowBackgroundInput = -1;
+            }
 
-            if (rdpOptions.UserInterface.BitmapPeristence)
-                this.client.AdvancedSettings.BitmapPeristence = -1;
+            if(rdpOptions.UserInterface.BitmapPeristence)
+            {
+                client.AdvancedSettings.BitmapPeristence = -1;
+            }
 
-            if (rdpOptions.UserInterface.EnableCompression)
-                this.client.AdvancedSettings.Compress = -1;
+            if(rdpOptions.UserInterface.EnableCompression)
+            {
+                client.AdvancedSettings.Compress = -1;
+            }
 
-            if (rdpOptions.UserInterface.AcceleratorPassthrough)
-                this.client.AdvancedSettings2.AcceleratorPassthrough = -1;
+            if(rdpOptions.UserInterface.AcceleratorPassthrough)
+            {
+                client.AdvancedSettings2.AcceleratorPassthrough = -1;
+            }
 
-            if (rdpOptions.UserInterface.DisableControlAltDelete)
-                this.client.AdvancedSettings2.DisableCtrlAltDel = -1;
+            if(rdpOptions.UserInterface.DisableControlAltDelete)
+            {
+                client.AdvancedSettings2.DisableCtrlAltDel = -1;
+            }
 
-            if (rdpOptions.UserInterface.DisplayConnectionBar)
-                this.client.AdvancedSettings2.DisplayConnectionBar = true;
+            if(rdpOptions.UserInterface.DisplayConnectionBar)
+            {
+                client.AdvancedSettings2.DisplayConnectionBar = true;
+            }
 
-            if (rdpOptions.UserInterface.DoubleClickDetect)
-                this.client.AdvancedSettings2.DoubleClickDetect = -1;
+            if(rdpOptions.UserInterface.DoubleClickDetect)
+            {
+                client.AdvancedSettings2.DoubleClickDetect = -1; 
+            }
 
-            if (rdpOptions.UserInterface.DisableWindowsKey)
-                this.client.AdvancedSettings2.EnableWindowsKey = -1;
+            if(rdpOptions.UserInterface.DisableWindowsKey)
+            {
+                client.AdvancedSettings2.EnableWindowsKey = -1;
+            }
 
-            if (rdpOptions.Security.EnableEncryption)
-                this.client.AdvancedSettings2.EncryptionEnabled = -1;
+            if(rdpOptions.Security.EnableEncryption)
+            {
+                client.AdvancedSettings2.EncryptionEnabled = -1;
+            }
 
 
-            this.ConfigureAzureService(rdpOptions);
-            this.ConfigureCustomReconnect();
+            ConfigureAzureService(rdpOptions);
+            ConfigureCustomReconnect();
         }
 
+        // ------------------------------------------------
         /// <summary>
         /// The ActiveX component requires a UTF-8 encoded string, but .NET uses
         /// UTF-16 encoded strings by default.  The following code converts
@@ -402,198 +504,253 @@ namespace Terminals.Connections
         ///  2. http://social.technet.microsoft.com/Forums/windowsserver/en-US/e68d4e9a-1c8a-4e55-83b3-e3b726ff5346/issue-with-using-advancedsettings2loadbalanceinfo
         ///  3. Manual comparison of raw packets between Windows RDP client and Terminals using WireShark.
         /// </summary>
+        
         private void ConfigureAzureService(RdpOptions rdpOptions)
         {
-            if (!String.IsNullOrEmpty(rdpOptions.UserInterface.LoadBalanceInfo))
+            if(!String.IsNullOrEmpty(rdpOptions.UserInterface.LoadBalanceInfo))
             {
                 var lbTemp = rdpOptions.UserInterface.LoadBalanceInfo;
 
-                if (lbTemp.Length % 2 == 1)
+                if(lbTemp.Length % 2 == 1)
+                {
                     lbTemp += " ";
+                }
 
                 lbTemp += "\r\n";
                 byte[] bytes = Encoding.UTF8.GetBytes(lbTemp);
                 string lbFinal = Encoding.Unicode.GetString(bytes);
-                this.client.AdvancedSettings2.LoadBalanceInfo = lbFinal;
+                client.AdvancedSettings2.LoadBalanceInfo = lbFinal;
             }
         }
 
         private void ConfigureCustomReconnect()
         {
-            this.client.AdvancedSettings3.EnableAutoReconnect = false;
-            this.client.AdvancedSettings3.MaxReconnectAttempts = 0;
-            this.client.AdvancedSettings3.keepAliveInterval = 0;
+            client.AdvancedSettings3.EnableAutoReconnect = false;
+            client.AdvancedSettings3.MaxReconnectAttempts = 0;
+            client.AdvancedSettings3.keepAliveInterval = 0;
         }
+
+        // ------------------------------------------------
 
         private void ConfigureStartBehaviour(RdpOptions rdpOptions)
         {
-            this.client.AdvancedSettings2.GrabFocusOnConnect = rdpOptions.GrabFocusOnConnect;
-            this.GrabInput = rdpOptions.GrabFocusOnConnect;
+            client.AdvancedSettings2.GrabFocusOnConnect = rdpOptions.GrabFocusOnConnect;
+            GrabInput = rdpOptions.GrabFocusOnConnect;
 
-            if (rdpOptions.Security.Enabled)
+            if(rdpOptions.Security.Enabled)
             {
-                if (rdpOptions.FullScreen)
-                    this.client.SecuredSettings2.FullScreen = -1;
+                if(rdpOptions.FullScreen)
+                {
+                    client.SecuredSettings2.FullScreen = -1;
+                }
 
-                this.client.SecuredSettings2.StartProgram = rdpOptions.Security.StartProgram;
-                this.client.SecuredSettings2.WorkDir = rdpOptions.Security.WorkingFolder;
+                client.SecuredSettings2.StartProgram = rdpOptions.Security.StartProgram;
+                client.SecuredSettings2.WorkDir = rdpOptions.Security.WorkingFolder;
             }
         }
+
+        // ------------------------------------------------
 
         private void ConfigureTimeouts(RdpOptions rdpOptions)
         {
             try
             {
-                this.client.AdvancedSettings2.MinutesToIdleTimeout = rdpOptions.TimeOuts.IdleTimeout;
+                client.AdvancedSettings2.MinutesToIdleTimeout = rdpOptions.TimeOuts.IdleTimeout;
 
                 int timeout = rdpOptions.TimeOuts.OverallTimeout;
-                if (timeout > 600)
-                    timeout = 10;
-                if (timeout <= 0)
-                    timeout = 10;
-                this.client.AdvancedSettings2.overallConnectionTimeout = timeout;
-                timeout = rdpOptions.TimeOuts.ConnectionTimeout;
-                if (timeout > 600)
-                    timeout = 10;
-                if (timeout <= 0)
-                    timeout = 10;
 
-                this.client.AdvancedSettings2.singleConnectionTimeout = timeout;
+                if(timeout > 600)
+                {
+                    timeout = 10;
+                }
+
+                if(timeout <= 0)
+                {
+                    timeout = 10;
+                }
+                
+                client.AdvancedSettings2.overallConnectionTimeout = timeout;
+                timeout = rdpOptions.TimeOuts.ConnectionTimeout;
+
+                if(timeout > 600)
+                {
+                    timeout = 10;
+                }
+
+                if(timeout <= 0)
+                {
+                    timeout = 10;
+                }
+
+                client.AdvancedSettings2.singleConnectionTimeout = timeout;
 
                 timeout = rdpOptions.TimeOuts.ShutdownTimeout;
-                if (timeout > 600)
+                
+                if(timeout > 600)
+                {
                     timeout = 10;
-                if (timeout <= 0)
+                }
+                
+                if(timeout <= 0)
+                {
                     timeout = 10;
-                this.client.AdvancedSettings2.shutdownTimeout = timeout;
+                }
+
+                client.AdvancedSettings2.shutdownTimeout = timeout;
             }
-            catch (Exception exc)
+            catch(Exception exc)
             {
                 Logging.Error("Error when trying to set timeout values.", exc);
             }
         }
 
+        // ------------------------------------------------
+
         private void ConfigureRedirectOptions(RdpOptions rdpOptions)
         {
-            this.client.AdvancedSettings3.RedirectPorts = rdpOptions.Redirect.Ports;
-            this.client.AdvancedSettings3.RedirectPrinters = rdpOptions.Redirect.Printers;
-            this.client.AdvancedSettings3.RedirectSmartCards = rdpOptions.Redirect.SmartCards;
-            this.client.AdvancedSettings3.PerformanceFlags = rdpOptions.UserInterface.PerformanceFlags;
-            this.client.AdvancedSettings6.RedirectClipboard = rdpOptions.Redirect.Clipboard;
-            this.client.AdvancedSettings6.RedirectDevices = rdpOptions.Redirect.Devices;
+            client.AdvancedSettings3.RedirectPorts = rdpOptions.Redirect.Ports;
+            client.AdvancedSettings3.RedirectPrinters = rdpOptions.Redirect.Printers;
+            client.AdvancedSettings3.RedirectSmartCards = rdpOptions.Redirect.SmartCards;
+            client.AdvancedSettings3.PerformanceFlags = rdpOptions.UserInterface.PerformanceFlags;
+            client.AdvancedSettings6.RedirectClipboard = rdpOptions.Redirect.Clipboard;
+            client.AdvancedSettings6.RedirectDevices = rdpOptions.Redirect.Devices;
         }
+
+        // ------------------------------------------------
 
         private void ConfigureConnectionBar(RdpOptions rdpOptions)
         {
-            this.client.AdvancedSettings6.ConnectionBarShowMinimizeButton = false;
-            this.client.AdvancedSettings6.ConnectionBarShowPinButton = false;
-            this.client.AdvancedSettings6.ConnectionBarShowRestoreButton = false;
-            this.client.AdvancedSettings3.DisplayConnectionBar = rdpOptions.UserInterface.DisplayConnectionBar;
+            client.AdvancedSettings6.ConnectionBarShowMinimizeButton = false;
+            client.AdvancedSettings6.ConnectionBarShowPinButton = false;
+            client.AdvancedSettings6.ConnectionBarShowRestoreButton = false;
+            client.AdvancedSettings3.DisplayConnectionBar = rdpOptions.UserInterface.DisplayConnectionBar;
         }
+
+        // ------------------------------------------------
 
         private void ConfigureTsGateway(RdpOptions rdpOptions)
         {
             // Terminal Server Gateway Settings
-            this.client.TransportSettings.GatewayUsageMethod = (uint)rdpOptions.TsGateway.UsageMethod;
-            this.client.TransportSettings.GatewayCredsSource = (uint)rdpOptions.TsGateway.CredentialSource;
-            this.client.TransportSettings.GatewayHostname = rdpOptions.TsGateway.HostName;
-            var tsgwGuarded = this.CredentialFactory.CreateCredential(rdpOptions.TsGateway.Security);
-            this.client.TransportSettings2.GatewayDomain = tsgwGuarded.Domain;
-            this.client.TransportSettings2.GatewayProfileUsageMethod = 1;
-            var security = this.ResolveTransportGatewayCredentials(rdpOptions);
-            IGuardedSecurity guarded = this.CredentialFactory.CreateSecurityOptoins(security);
-            this.client.TransportSettings2.GatewayDomain = guarded.Domain;
-            this.client.TransportSettings2.GatewayUsername = guarded.UserName;
-            this.client.TransportSettings2.GatewayPassword = guarded.Password;
+            
+            client.TransportSettings.GatewayUsageMethod = (uint)rdpOptions.TsGateway.UsageMethod;
+            client.TransportSettings.GatewayCredsSource = (uint)rdpOptions.TsGateway.CredentialSource;
+            client.TransportSettings.GatewayHostname = rdpOptions.TsGateway.HostName;
+            var tsgwGuarded = CredentialFactory.CreateCredential(rdpOptions.TsGateway.Security);
+            client.TransportSettings2.GatewayDomain = tsgwGuarded.Domain;
+            client.TransportSettings2.GatewayProfileUsageMethod = 1;
+            var security = ResolveTransportGatewayCredentials(rdpOptions);
+            IGuardedSecurity guarded = CredentialFactory.CreateSecurityOptoins(security);
+            client.TransportSettings2.GatewayDomain = guarded.Domain;
+            client.TransportSettings2.GatewayUsername = guarded.UserName;
+            client.TransportSettings2.GatewayPassword = guarded.Password;
         }
+
+        // ------------------------------------------------
 
         private ISecurityOptions ResolveTransportGatewayCredentials(RdpOptions rdpOptions)
         {
-            if (rdpOptions.TsGateway.SeparateLogin)
+            if(rdpOptions.TsGateway.SeparateLogin)
+            {
                 return rdpOptions.TsGateway.Security;
+            }
 
-            return this.Favorite.Security;
+            return Favorite.Security;
         }
+
+        // ------------------------------------------------
 
         private void ConfigureSecurity(RdpOptions rdpOptions)
         {
-            if (rdpOptions.Security.EnableTLSAuthentication)
-                this.client.AdvancedSettings5.AuthenticationLevel = 2;
+            if(rdpOptions.Security.EnableTLSAuthentication)
+                client.AdvancedSettings5.AuthenticationLevel = 2;
 
-            this.nonScriptable.EnableCredSspSupport = rdpOptions.Security.EnableNLAAuthentication;
+            nonScriptable.EnableCredSspSupport = rdpOptions.Security.EnableNLAAuthentication;
 
             var audioMode = (int)rdpOptions.Redirect.Sounds;
-            this.client.SecuredSettings2.AudioRedirectionMode = (audioMode >= 0 && audioMode <= 2) ? audioMode : 0;
+            client.SecuredSettings2.AudioRedirectionMode = (audioMode >= 0 && audioMode <= 2) ? audioMode : 0;
 
-            IGuardedSecurity security = this.ResolveFavoriteCredentials();
+            IGuardedSecurity security = ResolveFavoriteCredentials();
 
-            this.client.UserName = security.UserName;
-            this.client.Domain = security.Domain;
+            client.UserName = security.UserName;
+            client.Domain = security.Domain;
+
             try
             {
-                if (!String.IsNullOrEmpty(security.Password))
+                if(!string.IsNullOrEmpty(security.Password) && nonScriptable != null)
                 {
-                    if (this.nonScriptable != null)
-                        this.nonScriptable.ClearTextPassword = security.Password;
+                    nonScriptable.ClearTextPassword = security.Password;
                 }
             }
-            catch (Exception exc)
+            catch(Exception exc)
             {
                 Logging.Error("Error when trying to set the ClearTextPassword on the nonScriptable mstsc object", exc);
             }
         }
 
+        // ------------------------------------------------
+
         private void ConfigureConnection(RdpOptions rdpOptions)
         {
-            this.client.Server = this.Favorite.ServerName;
-            this.client.AdvancedSettings3.RDPPort = this.Favorite.Port;
-            this.client.AdvancedSettings3.ContainerHandledFullScreen = -1;
+            client.Server = Favorite.ServerName;
+            client.AdvancedSettings3.RDPPort = Favorite.Port;
+            client.AdvancedSettings3.ContainerHandledFullScreen = -1;
+
             // Use ConnectToServerConsole or ConnectToAdministerServer based on implementation
-            this.client.AdvancedSettings7.ConnectToAdministerServer = rdpOptions.ConnectToConsole;
-            this.client.AdvancedSettings3.ConnectToServerConsole = rdpOptions.ConnectToConsole;
+
+            client.AdvancedSettings7.ConnectToAdministerServer = rdpOptions.ConnectToConsole;
+            client.AdvancedSettings3.ConnectToServerConsole = rdpOptions.ConnectToConsole;
         }
+
+        // ------------------------------------------------
 
         private void AssignEventHandlers()
         {
-            this.client.OnRequestLeaveFullScreen += new EventHandler(this.client_OnRequestLeaveFullScreen);
-            this.client.OnDisconnected += new IMsTscAxEvents_OnDisconnectedEventHandler(this.client_OnDisconnected);
-            this.client.OnWarning += new IMsTscAxEvents_OnWarningEventHandler(this.client_OnWarning);
-            this.client.OnFatalError += new IMsTscAxEvents_OnFatalErrorEventHandler(this.client_OnFatalError);
-            this.client.OnLogonError += new IMsTscAxEvents_OnLogonErrorEventHandler(this.client_OnLogonError);
-            this.client.OnConnected += new EventHandler(client_OnConnected);
+            client.OnRequestLeaveFullScreen += new EventHandler(client_OnRequestLeaveFullScreen);
+            client.OnDisconnected += new IMsTscAxEvents_OnDisconnectedEventHandler(client_OnDisconnected);
+            client.OnWarning += new IMsTscAxEvents_OnWarningEventHandler(client_OnWarning);
+            client.OnFatalError += new IMsTscAxEvents_OnFatalErrorEventHandler(client_OnFatalError);
+            client.OnLogonError += new IMsTscAxEvents_OnLogonErrorEventHandler(client_OnLogonError);
+            client.OnConnected += new EventHandler(client_OnConnected);
+
+
             // assign the drag and drop event handlers directly throws an exception
-            var clientControl = (Control)this.client;
-            clientControl.DragEnter += new DragEventHandler(this.client_DragEnter);
-            clientControl.DragDrop += new DragEventHandler(this.client_DragDrop);
+
+            var clientControl = (Control)client;
+            clientControl.DragEnter += new DragEventHandler(client_DragEnter);
+            clientControl.DragDrop += new DragEventHandler(client_DragDrop);
         }
+
+        // ------------------------------------------------
 
         private void client_OnConnected(object sender, EventArgs e)
         {
             // setting the full screen directly in constructor may affect screen resolution changes
-            this.client.FullScreen = true;
+
+            client.FullScreen = true;
         }
+
+        // ------------------------------------------------
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if(disposing)
             {
-                this.connectionStateDetector.Dispose();
-                this.client.Dispose();
-                this.client = null;
+                connectionStateDetector.Dispose();
+                client.Dispose();
+                client = null;
             }
 
             base.Dispose(disposing);
         }
 
-        #endregion
-
-        #region Eventing
+        // ------------------------------------------------
 
         private void client_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            string desktopShare = this.ParentForm.GetDesktopShare();
-            if (String.IsNullOrEmpty(desktopShare))
+            string desktopShare = ParentForm.GetDesktopShare();
+
+            if(String.IsNullOrEmpty(desktopShare))
             {
                 MessageBox.Show(this, "A Desktop Share was not defined for this connection.\n" +
                     "Please define a share in the connection properties window (under the Local Resources tab)."
@@ -601,82 +758,105 @@ namespace Terminals.Connections
             }
             else
             {
-                this.SHCopyFiles(files, desktopShare);
+                SHCopyFiles(files, desktopShare);
             }
         }
+
+        // ------------------------------------------------
 
         private void SHCopyFiles(string[] sourceFiles, string destinationFolder)
         {
             SHFileOperationWrapper fo = new SHFileOperationWrapper();
             List<string> destinationFiles = new List<string>();
 
-            foreach (string sourceFile in sourceFiles)
+            foreach(string sourceFile in sourceFiles)
             {
                 destinationFiles.Add(Path.Combine(destinationFolder, Path.GetFileName(sourceFile)));
             }
 
             fo.Operation = SHFileOperationWrapper.FileOperations.FO_COPY;
-            fo.OwnerWindow = this.Handle;
+            fo.OwnerWindow = Handle;
             fo.SourceFiles = sourceFiles;
             fo.DestFiles = destinationFiles.ToArray();
             fo.DoOperation();
         }
 
+        // ------------------------------------------------
+
         private void client_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
+            if(e.Data.GetDataPresent(DataFormats.FileDrop, false))
+            {
                 e.Effect = DragDropEffects.Copy;
+            }
             else
+            {
                 e.Effect = DragDropEffects.None;
+            }
         }
+
+        // ------------------------------------------------
 
         private void client_OnRequestLeaveFullScreen(object sender, EventArgs e)
         {
-            this.ParentForm.OnLeavingFullScreen();
+            ParentForm.OnLeavingFullScreen();
         }
+
+        // ------------------------------------------------
 
         private void client_OnDisconnected(object sender, IMsTscAxEvents_OnDisconnectedEvent e)
         {
-            if (this.DecideToReconnect(e))
+            if(DecideToReconnect(e))
             {
-                this.TryReconnect();
+                TryReconnect();
             }
             else
             {
-                this.ShowDisconnetMessageBox(e);
-                this.FireDisconnected();
+                ShowDisconnetMessageBox(e);
+                FireDisconnected();
             }
         }
+
+        // ------------------------------------------------
 
         private bool DecideToReconnect(IMsTscAxEvents_OnDisconnectedEvent e)
         {
             // 516 reason in case of reconnect expired
             // 2308 connection lost
             // 2 - regular logof also in case of forced reboot or shutdown
-            if (e.discReason != 2308 && e.discReason != 2)
-                return false;
 
-            return this.Settings.AskToReconnect;
+            if(e.discReason != 2308 && e.discReason != 2)
+            {
+                return false;
+            }
+
+            return Settings.AskToReconnect;
         }
+
+        // ------------------------------------------------
 
         private void TryReconnect()
         {
-            this.reconecting.Show();
-            this.reconecting.BringToFront();
-            this.connectionStateDetector.Start();
+            reconecting.Show();
+            reconecting.BringToFront();
+            connectionStateDetector.Start();
         }
+
+        // ------------------------------------------------
 
         private void ShowDisconnetMessageBox(IMsTscAxEvents_OnDisconnectedEvent e)
         {
             int reason = e.discReason;
-            string error = RdpClientErrorMessages.ToDisconnectMessage(this.client, reason);
+            string error = RdpClientErrorMessages.ToDisconnectMessage(client, reason);
 
-            if (!String.IsNullOrEmpty(error))
+            if(!String.IsNullOrEmpty(error))
             {
-                string message = String.Format("Error connecting to {0}\n\n{1}", this.client.Server, error);
+                string message = String.Format("Error connecting to {0}\n\n{1}", client.Server, error);
                 MessageBox.Show(this, message, "Terminals", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
+
+        // ------------------------------------------------
 
         private void client_OnFatalError(object sender, IMsTscAxEvents_OnFatalErrorEvent e)
         {
@@ -687,6 +867,8 @@ namespace Terminals.Connections
             Logging.Fatal(finalMsg);
         }
 
+        // ------------------------------------------------
+
         private void client_OnWarning(object sender, IMsTscAxEvents_OnWarningEvent e)
         {
             int warningCode = e.warningCode;
@@ -695,6 +877,8 @@ namespace Terminals.Connections
             Logging.Warn(finalMsg);
         }
 
+        // ------------------------------------------------
+
         private void client_OnLogonError(object sender, IMsTscAxEvents_OnLogonErrorEvent e)
         {
             int errorCode = e.lError;
@@ -702,7 +886,5 @@ namespace Terminals.Connections
             string finalMsg = String.Format("There was a logon error returned from the RDP Connection, details:\n\nLogon Code:{0}\n\nLogon Description:{1}", errorCode, message);
             Logging.Error(finalMsg);
         }
-
-        #endregion
     }
 }
