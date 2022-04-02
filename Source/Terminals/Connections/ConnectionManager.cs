@@ -44,10 +44,10 @@ namespace Terminals.Connections
 
         private static void LogDuplicitPlugin(IConnectionPlugin loaded)
         {
-            const string MESSAGE_FORMAT = "Plugin for protocol {0} ({1}:{2}) already present.";
-            Type pluginType = loaded.GetType();
-            string assemblyPath = pluginType.Assembly.CodeBase;
-            string message = string.Format(MESSAGE_FORMAT, loaded.PortName, pluginType, assemblyPath);
+            var pluginType = loaded.GetType();
+            var assemblyPath = pluginType.Assembly.CodeBase;
+            var message = $"Plugin for protocol {loaded.PortName} ({pluginType}:{assemblyPath}) already present.";
+
             Logging.Warn(message);
         }
 
@@ -57,10 +57,11 @@ namespace Terminals.Connections
         }
 
         /// <summary>
-        /// Explicit call of update properties container depending on selected protocol.
-        /// Don't call this in property setter, because of serializer.
-        /// Returns never null instance of the options, in case the protocol is identical, returns currentOptions.
+        ///     Explicit call of update properties container depending on selected protocol.
+        ///     Don't call this in property setter, because of serializer.
+        ///     Returns never null instance of the options, in case the protocol is identical, returns currentOptions.
         /// </summary>
+        
         internal ProtocolOptions UpdateProtocolPropertiesByProtocol(string newProtocol, ProtocolOptions currentOptions)
         {
             IConnectionPlugin plugin = FindPlugin(newProtocol);

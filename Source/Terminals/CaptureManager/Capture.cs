@@ -109,7 +109,7 @@ namespace Terminals.CaptureManager
         {
             get
             {
-                return Path.Combine(Path.GetDirectoryName(this.FilePath), string.Format("{0}.comments", Path.GetFileName(this.filepath)));
+                return Path.Combine(Path.GetDirectoryName(this.FilePath), $"{Path.GetFileName(this.filepath)}.comments");
             }
         }
 

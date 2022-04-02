@@ -1,7 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
+using System.Collections.Generic;
+
 using AxWFICALib;
 using Terminals.Data;
 
@@ -15,6 +16,8 @@ namespace Terminals.Connections
 
         public override bool Connected { get { return connected; } }
 
+        // ------------------------------------------------
+
         public override bool Connect()
         {
             try
@@ -25,34 +28,35 @@ namespace Terminals.Connections
                 iIcaClient.OnDisconnect += new EventHandler(iIcaClient_OnDisconnect);
                 iIcaClient.Dock = DockStyle.Fill;
 
-
                 Controls.Add(iIcaClient);
 
                 IGuardedSecurity resolved = this.ResolveFavoriteCredentials();
 
-                //rd.SendSpecialKeys(VncSharp.SpecialKeys);            
                 iIcaClient.Parent = this.Parent;
                 iIcaClient.Dock = DockStyle.Fill;
 
                 iIcaClient.Address = Favorite.ServerName;
+                
                 switch (Favorite.Display.Colors)
                 {
                     case Colors.Bit16:
                         iIcaClient.SetProp("DesiredColor", "16");
                         break;
+                    
                     case Colors.Bits32:
                         iIcaClient.SetProp("DesiredColor", "32");
                         break;
+
                     case Colors.Bits8:
                         iIcaClient.SetProp("DesiredColor", "16");
                         break;
+
                     default:
                         iIcaClient.SetProp("DesiredColor", "24");
                         break;
-
                 }
-                //             iIcaClient.Application = "Terminals " + Program.TerminalsVersion.ToString();
 
+                // ------------------------------------------------
                 // This line causes the following misleading error.
                 // To log on to this remote computer, you must have Terminal Server User Access permissions on this computer. 
                 // By default, members of the Remote Desktop Users group have these permissions. If you are not a member of the 
@@ -65,19 +69,19 @@ namespace Terminals.Connections
                 iIcaClient.Encrypt = icaOptions.EnableEncryption;
                 string encryptLevel = "Encrypt";
                 string specifiedLevel = icaOptions.EncryptionLevel.Trim();
+
                 if (specifiedLevel.Contains(" "))
                 {
                     encryptLevel = specifiedLevel.Substring(0, specifiedLevel.IndexOf(" ")).Trim();
+                    
                     if (encryptLevel != "") iIcaClient.EncryptionLevelSession = encryptLevel;
                 }
-
-
-
 
                 iIcaClient.Domain = resolved.Domain;
                 iIcaClient.Address = Favorite.ServerName;
                 iIcaClient.Username = resolved.UserName;
                 iIcaClient.SetProp("ClearPassword", resolved.Password);
+
                 if (icaOptions.ApplicationName != "")
                 {
                     iIcaClient.ConnectionEntry = icaOptions.ApplicationName;
@@ -86,7 +90,6 @@ namespace Terminals.Connections
                     iIcaClient.WorkDirectory = icaOptions.ApplicationWorkingFolder;
                 }
 
-
                 Text = "Connecting to ICA Server...";
 
                 iIcaClient.Visible = true;
@@ -94,9 +97,9 @@ namespace Terminals.Connections
                 iIcaClient.SetProp("ScalingMode", "3");
                 iIcaClient.Launch = false;
                 iIcaClient.TransportDriver = "TCP/IP";
+
                 iIcaClient.Connect();
                 iIcaClient.Focus();
-
 
                 return true;
             }
@@ -107,6 +110,8 @@ namespace Terminals.Connections
             }
         }
 
+        // ------------------------------------------------
+
         private void iIcaClient_OnDisconnect(object sender, EventArgs e)
         {
             Logging.Fatal("ICA Connection Lost" + this.Favorite.Name);
@@ -114,19 +119,26 @@ namespace Terminals.Connections
             this.FireDisconnected();
         }
 
+        // ------------------------------------------------
+
         private void ICAConnection_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             string desktopShare = ParentForm.GetDesktopShare();
-            if (String.IsNullOrEmpty(desktopShare))
+
+            if(String.IsNullOrEmpty(desktopShare))
             {
                 MessageBox.Show(this, "A Desktop Share was not defined for this connection.\n" +
                     "Please define a share in the connection properties window (under the Local Resources tab)."
                     , "Terminals", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             else
+            {
                 SHCopyFiles(files, desktopShare);
+            }
         }
+
+        // ------------------------------------------------
 
         private void ICAConnection_DragEnter(object sender, DragEventArgs e)
         {
@@ -139,6 +151,8 @@ namespace Terminals.Connections
                 e.Effect = DragDropEffects.None;
             }
         }
+
+        // ------------------------------------------------
 
         private void SHCopyFiles(string[] sourceFiles, string destinationFolder)
         {
@@ -158,6 +172,8 @@ namespace Terminals.Connections
             fo.DoOperation();
         }
 
+        // ------------------------------------------------
+
         protected override void Dispose(bool isDisposing)
         {
             try
@@ -170,10 +186,14 @@ namespace Terminals.Connections
             }
         }
 
+        // ------------------------------------------------
+
         private void TryDisposeICaClient(bool isDisposing)
         {
             this.connected = false;
+            
             // should be redundant because it is assigned as control
+
             if (isDisposing && !this.iIcaClient.IsDisposed)
             {
                 this.iIcaClient.Dispose();

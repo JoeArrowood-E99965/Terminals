@@ -176,11 +176,13 @@ namespace Terminals.CaptureManager
             if (this.treeViewFolders.SelectedNode != null && this.treeViewFolders.SelectedNode != this.root)
             {
                 DirectoryInfo dir = (this.treeViewFolders.SelectedNode.Tag as DirectoryInfo);
+
                 if (Directory.Exists(dir.FullName))
                 {
                     FileInfo[] files = dir.GetFiles();
                     DirectoryInfo[] dirs = dir.GetDirectories();
                     string msg = string.Format("{0}\r\n\r\n", Program.Resources.GetString("ConfirmDeleteSingleFolder"));
+                    
                     if (files.Length > 0)
                     {
                         msg += string.Format("The folder \"{0}\" contains {1} files.", this.treeViewFolders.SelectedNode.Text, files.Length);
@@ -192,6 +194,7 @@ namespace Terminals.CaptureManager
                     }
 
                     DialogResult result = MessageBox.Show(msg, Program.Resources.GetString("ConfirmCaptionDeleteSingleFolder"), MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                   
                     if (result == DialogResult.OK)
                     {
                         string rootFolder = dir.FullName;

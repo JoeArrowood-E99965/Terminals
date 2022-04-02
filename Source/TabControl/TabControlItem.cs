@@ -1,21 +1,16 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Windows.Forms;
 using System.ComponentModel;
 
 namespace TabControl
 {
-    [Designer(typeof(TabControlItemDesigner))]
     [ToolboxItem(false)]
-    [DefaultProperty("Title")]
     [DefaultEvent("Changed")]
+    [DefaultProperty("Title")]
+    [Designer(typeof(TabControlItemDesigner))]
     public class TabControlItem : Panel
     {
-        #region Fields
-
-        //private DrawItemState drawState = DrawItemState.None;
         private RectangleF stripRect = Rectangle.Empty;
         private bool canClose = true;
         private bool selected = false;
@@ -26,9 +21,7 @@ namespace TabControl
 
         public event EventHandler Changed;
 
-        #endregion
-
-        #region Props
+        // ------------------------------------------------
 
         [DefaultValue(true)]
         public new bool Visible
@@ -36,13 +29,15 @@ namespace TabControl
             get { return visible; }
             set
             {
-                if (visible == value)
+                if(visible == value)
                     return;
 
                 visible = value;
                 OnChanged();
             }
         }
+
+        // ------------------------------------------------
 
         [Browsable(false)]
         [DefaultValue(false)]
@@ -52,7 +47,7 @@ namespace TabControl
             get { return isDrawn; }
             set
             {
-                if (isDrawn == value)
+                if(isDrawn == value)
                     return;
 
                 isDrawn = value;
@@ -60,17 +55,23 @@ namespace TabControl
         }
 
         [DefaultValue(true)]
+        // ------------------------------------------------
+
         public bool CanClose
         {
             get { return canClose; }
             set { canClose = value; }
         }
 
+        // ------------------------------------------------
+
         public RectangleF StripRect
         {
             get { return stripRect; }
             internal set { stripRect = value; }
         }
+
+        // ------------------------------------------------
 
         [DefaultValue("Name")]
         public string Title
@@ -81,7 +82,7 @@ namespace TabControl
             }
             set
             {
-                if (title == value)
+                if(title == value)
                     return;
 
                 title = value;
@@ -89,19 +90,24 @@ namespace TabControl
             }
         }
 
+        // ------------------------------------------------
+
         [DefaultValue("Name")]
         public string ToolTipText
         {
             get { return toolTipText; }
-            set 
-            { 
-                toolTipText = value; 
+            set
+            {
+                toolTipText = value;
             }
         }
 
+        // ------------------------------------------------
         /// <summary>
-        /// Gets and sets a value indicating if the page is selected.
+        ///     Gets and sets a value indicating if the 
+        ///     page is selected.
         /// </summary>
+
         [DefaultValue(false)]
         [Browsable(false)]
         public bool Selected
@@ -109,26 +115,28 @@ namespace TabControl
             get { return selected; }
             set
             {
-                if (selected == value)
+                if(selected == value)
                     return;
 
                 selected = value;
             }
         }
 
-        #endregion
-
-        #region Ctor
+        // ------------------------------------------------
 
         public TabControlItem() : this(string.Empty, null)
         {
         }
 
+        // ------------------------------------------------
+
         public TabControlItem(Control displayControl) : this(string.Empty, displayControl)
         {
         }
 
-        public TabControlItem(string caption, Control displayControl) 
+        // ------------------------------------------------
+
+        public TabControlItem(string caption, Control displayControl)
         {
             this.selected = false;
             this.Visible = true;
@@ -136,32 +144,33 @@ namespace TabControl
 
             UpdateText(caption, displayControl);
 
-            //Add to controls
+            // Add to controls
+
             this.Controls.Add(displayControl);
         }
 
-        #endregion
-
-        #region ShouldSerialize
+        // ------------------------------------------------
 
         public bool ShouldSerializeIsDrawn()
         {
             return false;
         }
 
+        // ------------------------------------------------
+
         public bool ShouldSerializeDock()
         {
             return false;
         }
+
+        // ------------------------------------------------
 
         public bool ShouldSerializeVisible()
         {
             return true;
         }
 
-        #endregion
-
-        #region Methods
+        // ------------------------------------------------
 
         internal bool LocationIsInTitle(Point mouseLocation)
         {
@@ -170,18 +179,20 @@ namespace TabControl
             return inTitle;
         }
 
+        // ------------------------------------------------
+
         private void UpdateText(string caption, Control displayControl)
         {
-            if (displayControl != null && displayControl is ICaptionSupport)
+            if(displayControl is ICaptionSupport)
             {
                 ICaptionSupport capControl = displayControl as ICaptionSupport;
                 this.Title = capControl.Caption;
             }
-            else if (caption!=null && caption.Length <= 0 && displayControl != null)
+            else if(caption!=null && caption.Length <= 0 && displayControl != null)
             {
                 this.Title = displayControl.Text;
             }
-            else if (caption != null)
+            else if(caption != null)
             {
                 this.Title = caption;
             }
@@ -191,14 +202,18 @@ namespace TabControl
             }
         }
 
+        /// -----------------------------------------------
         /// <summary>
-        /// Return a string representation of page.
+        ///     Return a string representation of page.
         /// </summary>
         /// <returns></returns>
+
         public override string ToString()
         {
-            return String.Format("TabControlItem:{0}", this.Title);
+            return $"TabControlItem:{Title}";
         }
+
+        // ------------------------------------------------
 
         public void Assign(TabControlItem item)
         {
@@ -208,23 +223,22 @@ namespace TabControl
             this.Tag = item.Tag;
         }
 
+        // ------------------------------------------------
+
         protected internal virtual void OnChanged()
         {
-            if (Changed != null)
+            if(Changed != null)
+            {
                 Changed(this, EventArgs.Empty);
+            }
         }
 
-        #endregion
-
-        #region ICaptionSupport Members
+        // ------------------------------------------------
 
         [Browsable(false)]
         public string Caption
         {
             get { return Text; }
         }
-
-        #endregion
-        
     }
 }
