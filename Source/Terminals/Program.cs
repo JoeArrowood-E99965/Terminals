@@ -31,26 +31,26 @@ namespace Terminals
             SetUnhandledExceptions();
             Info.SetApplicationVersion();
 
-            Logging.Info($"{new string('-', 30)} Title: {Info.TitleVersion} started Version:{Info.DLLVersion} Date:{Info.BuildDate} {new string('-', 30)}");
+            Logging.Info($"{new string('-', 15)} Title: {Info.TitleVersion} Version:{Info.DLLVersion} Date:{Info.BuildDate} {new string('-', 15)}");
 
-            Logging.Info("Start state 1 Complete: Unhandled exceptions");
+            Logging.Info("Start state 1 Complete:    No Unhandled exceptions");
 
             LogGeneralProperties();
-            Logging.Info("Start state 2 Complete: Log General properties");
+            Logging.Info("Start state 2 Complete:    Log General properties");
 
             SetApplicationProperties();
-            Logging.Info("Start state 3 Complete: Set application properties");
+            Logging.Info("Start state 3 Complete:    Set application properties");
 
             var settings = Settings.Instance;
             CommandLineArgs commandLine = ParseCommandline(settings);
-            Logging.Info("Start state 4 Complete: Parse command line");
+            Logging.Info("Start state 4 Complete:    Parse command line");
 
             if(!EnsureDataAreWriteAble()) { return; }
-            Logging.Info("Start state 5 Complete: User account control");
+            Logging.Info("Start state 5 Complete:    User account control");
             
             if (commandLine.SingleInstance && SingleInstanceApplication.Instance.NotifyExisting(commandLine)) { return; }
 
-            Logging.Info("Start state 6 Complete: Set Single instance mode");
+            Logging.Info("Start state 6 Complete:    Set Single instance mode");
             
             var connectionManager = new ConnectionManager(new PluginsLoader(settings));
             var favoriteIcons = new FavoriteIcons(connectionManager);
@@ -60,10 +60,10 @@ namespace Terminals
             // do it before config update, because it may import favorites from previous version
 
             IPersistence persistence = persistenceFactory.CreatePersistence();
-            Logging.Info("Start state 7 Complete: Initilizing Persistence");
+            Logging.Info("Start state 7 Complete:    Initilizing Persistence");
 
             TryUpdateConfig(settings, persistence, connectionManager);
-            Logging.Info("Start state 8 Complete: Configuration upgrade");
+            Logging.Info("Start state 8 Complete:    Configuration upgrade");
 
             ShowFirstRunWizard(settings, persistence, connectionManager);
             var startupUi = new StartupUi();
@@ -72,7 +72,7 @@ namespace Terminals
 
             RunMainForm(persistence, connectionManager, favoriteIcons, commandLine);
 
-            Logging.Info($"{new string('-', 30)} {Info.TitleVersion} Stopped {new string('-', 30)}");
+            Logging.Info($"{new string('-', 15)} {Info.TitleVersion} Stopped {new string('-', 15)}");
         }
 
         // ------------------------------------------------
@@ -170,16 +170,17 @@ namespace Terminals
         
         private static void LogGeneralProperties()
         {
-            Logging.Info($"CommandLine:{Environment.CommandLine}");
-            Logging.Info($"CurrentDirectory:{Environment.CurrentDirectory}");
-            Logging.Info($"MachineName:{Environment.MachineName}");
-            Logging.Info($"OSVersion:{Environment.OSVersion}");
-            Logging.Info($"ProcessorCount:{Environment.ProcessorCount}");
-            Logging.Info($"UserInteractive:{Environment.UserInteractive}");
-            Logging.Info($"Version:{Environment.Version}");
-            Logging.Info($"WorkingSet:{Environment.WorkingSet}");
-            Logging.Info($"Is64BitOperatingSystem:{Native.Wow.Is64BitOperatingSystem}");
-            Logging.Info($"Is64BitProcess:{Native.Wow.Is64BitProcess}");
+            Logging.Info($"Command Line:             {Environment.CommandLine}");
+            Logging.Info($"Current Directory:         {Environment.CurrentDirectory}");
+            Logging.Info($"Machine Name:              {Environment.MachineName}");
+            Logging.Info($"OS Version:                {Environment.OSVersion}");
+            Logging.Info($"Processor Count:           {Environment.ProcessorCount}");
+            Logging.Info($"User Name:                 {Environment.UserDomainName}/{Environment.UserName}");
+            Logging.Info($"User Interactive:          {Environment.UserInteractive}");
+            Logging.Info($"Version:                   {Environment.Version}");
+            Logging.Info($"Working Set:               {Environment.WorkingSet}");
+            Logging.Info($"Is 64Bit Operating System: {Native.Wow.Is64BitOperatingSystem}");
+            Logging.Info($"Is 64Bit Process:          {Native.Wow.Is64BitProcess}");
         }
 
         // ------------------------------------------------

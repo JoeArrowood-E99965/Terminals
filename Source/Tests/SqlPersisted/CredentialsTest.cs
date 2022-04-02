@@ -1,15 +1,19 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Terminals.Configuration;
+
 using Terminals.Data;
-using Terminals.Data.Credentials;
 using Terminals.Data.DB;
+using Terminals.Configuration;
+using Terminals.Data.Credentials;
 
 namespace Tests.SqlPersisted
 {
+    /// -----------------------------------------------
     /// <summary>
-    ///This is a test class for database implementation of StoredCredentials
-    ///</summary>
+    ///     This is a test class for database 
+    ///     implementation of StoredCredentials
+    /// </summary>
+
     [TestClass]
     public class CredentialsTest : TestsLab
     {
@@ -17,63 +21,73 @@ namespace Tests.SqlPersisted
         {
             get
             {
-                return this.PrimaryPersistence.Credentials;
+                return PrimaryPersistence.Credentials;
             }
         }
+
+        // ------------------------------------------------
 
         private IQueryable<DbCredentialSet> CheckDatabaseCredentials
         {
             get
             {
-                return this.CheckDatabase.CredentialBase
+                return CheckDatabase.CredentialBase
                     .OfType<DbCredentialSet>();
             }
         }
 
+        // ------------------------------------------------
+
         [TestInitialize]
         public void TestInitialize()
         {
-            this.InitializeTestLab();
+            InitializeTestLab();
         }
+
+        // ------------------------------------------------
 
         [TestCleanup]
         public void TestClose()
         {
-            this.ClearTestLab();
+            ClearTestLab();
         }
+
+        // ------------------------------------------------
 
         private DbCredentialSet CreateTestCredentialSet()
         {
-            DbCredentialSet credentials = this.PrimaryFactory.CreateCredentialSet() as DbCredentialSet;
+            var credentials = PrimaryFactory.CreateCredentialSet() as DbCredentialSet;
             credentials.Name = "TestCredentialName";
-            var guarded = new GuardedCredential(credentials, this.PrimaryPersistence.Security);
-            guarded.Domain = "TestDomain";
-            guarded.UserName = "TestUserName";
-            guarded.Password = VALIDATION_VALUE;
+
             return credentials;
         }
+
+        // ------------------------------------------------
 
         [TestMethod]
         public void AddCredentialsTest()
         {
-            this.AddTestCredentialsToDatabase();
+            AddTestCredentialsToDatabase();
 
-            var checkCredentialSet = this.SecondaryPersistence.Credentials.FirstOrDefault() as DbCredentialSet;
-            string resolvedPassword = this.ResolveVerifiedPassword(checkCredentialSet);
+            var checkCredentialSet = SecondaryPersistence.Credentials.FirstOrDefault() as DbCredentialSet;
+            string resolvedPassword = ResolveVerifiedPassword(checkCredentialSet);
+
             Assert.IsNotNull(checkCredentialSet, "Credential didn't reach the database");
             Assert.AreEqual(VALIDATION_VALUE, resolvedPassword, "Password doesn't match");
         }
 
+        // ------------------------------------------------
+
         [TestMethod]
         public void RemoveCredentialsTest()
         {
-            var testCredentials = this.AddTestCredentialsToDatabase();
+            var testCredentials = AddTestCredentialsToDatabase();
 
-            int credentialsCountBefore = this.CheckDatabaseCredentials.Count();
-            this.PrimaryCredentials.Remove(testCredentials);
-            int credentialsCountAfter = this.CheckDatabaseCredentials.Count();
+            int credentialsCountBefore = CheckDatabaseCredentials.Count();
+            PrimaryCredentials.Remove(testCredentials);
+            int credentialsCountAfter = CheckDatabaseCredentials.Count();
 
-            int baseAfter = this.CheckDatabase.Database
+            int baseAfter = CheckDatabase.Database
                 .SqlQuery<int>("select Count(Id) from CredentialBase")
                 .FirstOrDefault();
 
@@ -82,32 +96,40 @@ namespace Tests.SqlPersisted
             Assert.AreEqual(0, baseAfter, "credential base wasn't removed from the database");
         }
 
+        // ------------------------------------------------
+
         private DbCredentialSet AddTestCredentialsToDatabase()
         {
-            var testCredentials = this.CreateTestCredentialSet();
-            this.PrimaryCredentials.Add(testCredentials);
+            var testCredentials = CreateTestCredentialSet();
+            PrimaryCredentials.Add(testCredentials);
             return testCredentials;
         }
 
+        // ------------------------------------------------
         /// <summary>
-        ///A test for UpdatePasswordsByNewKeyMaterial
-        ///</summary>
+        ///     A test for UpdatePasswordsByNewKeyMaterial
+        /// </summary>
+
         [TestMethod]
         public void UpdateCredentialsPasswordsByNewKeyMaterialTest()
         {
             // this is the only one test, which plays with different master passwords
-            Settings.Instance.PersistenceSecurity = this.PrimaryPersistence.Security;
-            this.AddTestCredentialsToDatabase();
-            this.PrimaryPersistence.Security.UpdateMasterPassword(VALIDATION_VALUE_B);
 
-            ICredentialSet checkCredentials = this.SecondaryPersistence.Credentials.FirstOrDefault();
-            string resolvedPassword = this.ResolveVerifiedPassword(checkCredentials);
+            Settings.Instance.PersistenceSecurity = PrimaryPersistence.Security;
+            AddTestCredentialsToDatabase();
+            PrimaryPersistence.Security.UpdateMasterPassword(VALIDATION_VALUE_B);
+
+            ICredentialSet checkCredentials = SecondaryPersistence.Credentials.FirstOrDefault();
+            string resolvedPassword = ResolveVerifiedPassword(checkCredentials);
+
             Assert.AreEqual(VALIDATION_VALUE, resolvedPassword, "Password lost after update of key material");
         }
 
+        // ------------------------------------------------
+
         private string ResolveVerifiedPassword(ICredentialSet checkCredentialSet)
         {
-            var guarded = new GuardedCredential(checkCredentialSet, this.SecondaryPersistence.Security);
+            var guarded = new GuardedCredential(checkCredentialSet, SecondaryPersistence.Security);
             return guarded.Password;
         }
     }
