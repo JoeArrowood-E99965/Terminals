@@ -25,8 +25,8 @@ namespace Terminals
         static extern void WTSFreeMemory(IntPtr pMemory);
 
         [DllImport("Wtsapi32.dll")]
-        static extern bool WTSQuerySessionInformation(
-            System.IntPtr hServer, int sessionId, WTS_INFO_CLASS wtsInfoClass, out System.IntPtr ppBuffer, out uint pBytesReturned);
+        static extern bool WTSQuerySessionInformation(IntPtr hServer, int sessionId, WTS_INFO_CLASS wtsInfoClass, 
+                                                      out System.IntPtr ppBuffer, out uint pBytesReturned);
 
         [DllImport("Kernel32.dll")]
         static extern int WTSGetActiveConsoleSessionId();

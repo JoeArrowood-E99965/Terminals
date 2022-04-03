@@ -1,12 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Terminals.Configuration;
-using Terminals.Connections;
+using System.Collections.Generic;
+
 using Terminals.Data;
-using Terminals.Forms.Controls;
 using Terminals.Wizard;
+using Terminals.Connections;
+using Terminals.Configuration;
+using Terminals.Forms.Controls;
 
 namespace Terminals
 {
@@ -19,46 +20,54 @@ namespace Terminals
         Scanner
     }
 
+    ///  --------------------------------------------------
+
     internal partial class FirstRunWizard : Form
     {
-        private readonly IPersistence persistence;
-        private readonly Settings settings = Settings.Instance;
-        private WizardForms SelectedForm = WizardForms.Intro;
-        private MethodInvoker miv;
-        private AddExistingRDPConnections rdp = new AddExistingRDPConnections();
-        private MasterPassword mp = new MasterPassword();
-        private CommonOptions co = new CommonOptions();
-        private DefaultCredentials dc = new DefaultCredentials();
+        private MethodInvoker _miv;
+        private readonly IPersistence _persistence;
+        private CommonOptions _co = new CommonOptions();
+        private MasterPassword _mp = new MasterPassword();
+        private WizardForms _selectedForm = WizardForms.Intro;
+        private readonly Settings _settings = Settings.Instance;
+        private DefaultCredentials _dc = new DefaultCredentials();
+        private AddExistingRDPConnections _rdp = new AddExistingRDPConnections();
 
-        private readonly ConnectionManager connectionManager;
+        private readonly ConnectionManager _connectionManager;
+
+        ///  ----------------------------------------------
 
         public FirstRunWizard(IPersistence persistence, ConnectionManager connectionManager)
         {
             InitializeComponent();
-            rdp.OnDiscoveryCompleted += new AddExistingRDPConnections.DiscoveryCompleted(rdp_OnDiscoveryCompleted);
-            miv = new MethodInvoker(DiscoComplete);
-            this.persistence = persistence;
-            this.connectionManager = connectionManager;
-            this.mp.AssignPersistence(persistence);
+            _rdp.OnDiscoveryCompleted += new AddExistingRDPConnections.DiscoveryCompleted(rdp_OnDiscoveryCompleted);
+            _miv = new MethodInvoker(DiscoComplete);
+            _persistence = persistence;
+            _connectionManager = connectionManager;
+            _mp.AssignPersistence(persistence);
         }
+
+        ///  ----------------------------------------------
 
         private void FirstRunWizard_Load(object sender, EventArgs e)
         {
-            IntroForm frm = new IntroForm();
+            var frm = new IntroForm();
             frm.Dock = DockStyle.Fill;
-            this.panel1.Controls.Add(frm);
-            settings.StartDelayedUpdate();
+            panel1.Controls.Add(frm);
+            _settings.StartDelayedUpdate();
         }
+
+        ///  ----------------------------------------------
 
         private void NextButton_Click(object sender, EventArgs e)
         {
-            if (SelectedForm == WizardForms.Intro)
+            if(_selectedForm == WizardForms.Intro)
             {
                 SwitchToMasterPassword();
             }
-            else if (SelectedForm == WizardForms.MasterPassword)
+            else if(_selectedForm == WizardForms.MasterPassword)
             {
-                if (mp.StorePassword)
+                if(_mp.StorePassword)
                 {
                     SwitchToDefaultCredentials();
                 }
@@ -67,19 +76,21 @@ namespace Terminals
                     SwitchToOptions();
                 }
             }
-            else if (SelectedForm == WizardForms.DefaultCredentials)
+            else if(_selectedForm == WizardForms.DefaultCredentials)
             {
                 SwitchToOptionsFromCredentials();
             }
-            else if (SelectedForm == WizardForms.Options)
+            else if(_selectedForm == WizardForms.Options)
             {
                 FinishOptions();
             }
-            else if (SelectedForm == WizardForms.Scanner)
+            else if(_selectedForm == WizardForms.Scanner)
             {
-                this.Hide();
+                Hide();
             }
         }
+
+        ///  ----------------------------------------------
 
         private void FinishOptions()
         {
@@ -88,117 +99,142 @@ namespace Terminals
                 ApplySettings();
                 StartImportIfRequested();
             }
-            catch (Exception exc)
+            catch(Exception exc)
             {
                 Logging.Error("Apply settings in the first run wizard failed.", exc);
             }
         }
 
+        ///  ----------------------------------------------
+
         private void StartImportIfRequested()
         {
-            if (this.co.ImportRDPConnections)
+            if(_co.ImportRDPConnections)
             {
-                this.nextButton.Enabled = false;
-                this.nextButton.Text = "Finished!";
-                this.panel1.Controls.Clear();
-                this.rdp.Dock = DockStyle.Fill;
-                this.panel1.Controls.Add(this.rdp);
-                this.rdp.StartImport(this.connectionManager);
-                this.SelectedForm = WizardForms.Scanner;
+                nextButton.Enabled = false;
+                nextButton.Text = "Finished!";
+                panel1.Controls.Clear();
+                _rdp.Dock = DockStyle.Fill;
+                panel1.Controls.Add(_rdp);
+                _rdp.StartImport(_connectionManager);
+                _selectedForm = WizardForms.Scanner;
             }
             else
             {
-                this.rdp.CancelDiscovery();
-                this.Hide();
+                _rdp.CancelDiscovery();
+                Hide();
             }
         }
 
+        ///  ----------------------------------------------
+
         private void ApplySettings()
         {
-            settings.MinimizeToTray = this.co.MinimizeToTray;
-            settings.SingleInstance = this.co.AllowOnlySingleInstance;
-            settings.ShowConfirmDialog = this.co.WarnOnDisconnect;
-            settings.EnableCaptureToClipboard = this.co.EnableCaptureToClipboard;
-            settings.EnableCaptureToFolder = this.co.EnableCaptureToFolder;
-            settings.AutoSwitchOnCapture = this.co.AutoSwitchOnCapture;
+            _settings.MinimizeToTray = _co.MinimizeToTray;
+            _settings.ShowConfirmDialog = _co.WarnOnDisconnect;
+            _settings.SingleInstance = _co.AllowOnlySingleInstance;
+            _settings.AutoSwitchOnCapture = _co.AutoSwitchOnCapture;
+            _settings.EnableCaptureToFolder = _co.EnableCaptureToFolder;
+            _settings.EnableCaptureToClipboard = _co.EnableCaptureToClipboard;
 
-            if (this.co.LoadDefaultShortcuts)
-                settings.SpecialCommands = SpecialCommandsWizard.LoadSpecialCommands();
+            if(_co.LoadDefaultShortcuts)
+            {
+                _settings.SpecialCommands = SpecialCommandsWizard.LoadSpecialCommands();
+            }
         }
+
+        ///  ----------------------------------------------
 
         private void SwitchToOptionsFromCredentials()
         {
-            settings.DefaultDomain = this.dc.DefaultDomain;
-            settings.DefaultPassword = this.dc.DefaultPassword;
-            settings.DefaultUsername = this.dc.DefaultUsername;
+            _settings.DefaultDomain = _dc.DefaultDomain;
+            _settings.DefaultPassword = _dc.DefaultPassword;
+            _settings.DefaultUsername = _dc.DefaultUsername;
 
-            this.nextButton.Enabled = true;
-            this.panel1.Controls.Clear();
-            this.panel1.Controls.Add(this.co);
-            this.SelectedForm = WizardForms.Options;
+            nextButton.Enabled = true;
+            panel1.Controls.Clear();
+            panel1.Controls.Add(_co);
+            _selectedForm = WizardForms.Options;
         }
+
+        ///  ----------------------------------------------
 
         private void SwitchToOptions()
         {
-            this.nextButton.Enabled = true;
-            this.panel1.Controls.Clear();
-            this.panel1.Controls.Add(this.co);
-            this.SelectedForm = WizardForms.Options;
+            nextButton.Enabled = true;
+            panel1.Controls.Clear();
+            panel1.Controls.Add(_co);
+            _selectedForm = WizardForms.Options;
         }
+
+        ///  ----------------------------------------------
 
         private void SwitchToDefaultCredentials()
         {
-            this.persistence.Security.UpdateMasterPassword(this.mp.Password);
-            this.nextButton.Enabled = true;
-            this.panel1.Controls.Clear();
-            this.panel1.Controls.Add(this.dc);
-            this.SelectedForm = WizardForms.DefaultCredentials;
+            _persistence.Security.UpdateMasterPassword(_mp.Password);
+            nextButton.Enabled = true;
+            panel1.Controls.Clear();
+            panel1.Controls.Add(_dc);
+            _selectedForm = WizardForms.DefaultCredentials;
         }
+
+        ///  ----------------------------------------------
 
         private void SwitchToMasterPassword()
         {
-            this.nextButton.Enabled = true;
-            this.panel1.Controls.Clear();
-            this.panel1.Controls.Add(this.mp);
-            this.SelectedForm = WizardForms.MasterPassword;
+            nextButton.Enabled = true;
+            panel1.Controls.Clear();
+            panel1.Controls.Add(_mp);
+            _selectedForm = WizardForms.MasterPassword;
         }
+
+        ///  ----------------------------------------------
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            rdp.CancelDiscovery();
-            this.Hide();
+            _rdp.CancelDiscovery();
+            Hide();
         }
+
+        ///  ----------------------------------------------
 
         private void DiscoComplete()
         {
             nextButton.Enabled = true;
             cancelButton.Enabled = false;
-            this.Hide();
+            Hide();
         }
+
+        ///  ----------------------------------------------
 
         private void rdp_OnDiscoveryCompleted()
         {
-            this.Invoke(miv);
+            Invoke(_miv);
         }
+
+        ///  ----------------------------------------------
 
         private void FirstRunWizard_FormClosing(object sender, FormClosingEventArgs e)
         {
-            this.settings.ShowWizard = false;
-            this.settings.SaveAndFinishDelayedUpdate();
+            _settings.ShowWizard = false;
+            _settings.SaveAndFinishDelayedUpdate();
             ImportDiscoveredFavorites();
         }
 
+        ///  ----------------------------------------------
+
         private void ImportDiscoveredFavorites()
         {
-            if (this.rdp.DiscoveredConnections.Count > 0)
+            if(_rdp.DiscoveredConnections.Count > 0)
             {
-                String message = String.Format("Automatic Discovery was able to find {0} connections.\r\n" +
-                  "Would you like to add them to your connections list?",
-                  this.rdp.DiscoveredConnections.Count);
-                if (MessageBox.Show(message, "Terminals Confirmation", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                var message = String.Format("Automatic Discovery was able to find {0} connections.\r\n" +
+                                            "Would you like to add them to your connections list?",
+                                            _rdp.DiscoveredConnections.Count);
+
+                if(MessageBox.Show(message, "Terminals Confirmation", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    List<FavoriteConfigurationElement> favoritesToImport = this.rdp.DiscoveredConnections.ToList();
-                    var managedImport = new ImportWithDialogs(this, this.persistence, this.connectionManager);
+                    List<FavoriteConfigurationElement> favoritesToImport = _rdp.DiscoveredConnections.ToList();
+                    var managedImport = new ImportWithDialogs(this, _persistence, _connectionManager);
                     managedImport.Import(favoritesToImport);
                 }
             }

@@ -1,7 +1,5 @@
-// Note the VB example will give you the first entry of the array n times where n is the size of the array
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace Terminals
@@ -58,8 +56,8 @@ namespace Terminals
         }
 
         [DllImport("Wtsapi32.dll")]
-        public static extern bool WTSQuerySessionInformation(
-            System.IntPtr hServer, int sessionId, WTS_INFO_CLASS wtsInfoClass, out System.IntPtr ppBuffer, out uint pBytesReturned);
+        public static extern bool WTSQuerySessionInformation(IntPtr hServer, int sessionId, WTS_INFO_CLASS wtsInfoClass, 
+                                                             out IntPtr ppBuffer, out uint pBytesReturned);
 
         public enum WTS_CONNECTSTATE_CLASS
         {
@@ -79,7 +77,7 @@ namespace Terminals
 
         public static IntPtr OpenServer(String name)
         {
-            IntPtr server = WTSOpenServer(name);
+            var server = WTSOpenServer(name);
             return server;
         }
 
@@ -90,17 +88,18 @@ namespace Terminals
 
         public static string QuerySessionInfo(IntPtr server, int sessionId, WTS_INFO_CLASS infoClass)
         {
-            System.IntPtr buffer = IntPtr.Zero;
+            var buffer = IntPtr.Zero;
             uint bytesReturned;
+
             try
             {
                 WTSQuerySessionInformation(server, sessionId, infoClass, out buffer, out bytesReturned);
                 return Marshal.PtrToStringAnsi(buffer);
             }
-            catch(Exception exc) 
+            catch(Exception exc)
             {
                 Logging.Info(exc);
-                return String.Empty;
+                return string.Empty;
             }
             finally
             {
@@ -114,43 +113,40 @@ namespace Terminals
             return ListSessions(serverName, null, null, null, null);
         }
 
-        public static List<SessionInfo> ListSessions(string serverName, string userName, string domainName, 
-            string clientName, WTS_CONNECTSTATE_CLASS? state)
+        public static List<SessionInfo> ListSessions(string serverName, string userName, string domainName,
+                                                     string clientName, WTS_CONNECTSTATE_CLASS? state)
         {
-            IntPtr server = IntPtr.Zero;
-            List<SessionInfo> sessions = new List<SessionInfo>();
-            server = OpenServer(serverName);
+            var sessions = new List<SessionInfo>();
+            var server = OpenServer(serverName);
+
             try
             {
-                IntPtr ppSessionInfo = IntPtr.Zero;
-                Int32 count = 0;
-                Int32 retval = WTSEnumerateSessions(server, 0, 1, ref ppSessionInfo, ref count);
-                Int32 dataSize = Marshal.SizeOf(typeof(WTS_SESSION_INFO));
-                Int32 current = (int)ppSessionInfo;
-                if (retval != 0)
+                var ppSessionInfo = IntPtr.Zero;
+                var count = 0;
+                var retval = WTSEnumerateSessions(server, 0, 1, ref ppSessionInfo, ref count);
+                var dataSize = Marshal.SizeOf(typeof(WTS_SESSION_INFO));
+                var current = (int)ppSessionInfo;
+
+                if(retval != 0)
                 {
-                    for (int i = 0; i < count; i++)
+                    for(int i = 0; i < count; i++)
                     {
                         SessionInfo sessionInfo = new SessionInfo();
                         WTS_SESSION_INFO si = (WTS_SESSION_INFO)Marshal.PtrToStructure((System.IntPtr)current, typeof(WTS_SESSION_INFO));
                         current += dataSize;
-                        
+
                         sessionInfo.Id = si.SessionID;
                         sessionInfo.UserName = QuerySessionInfo(server, sessionInfo.Id, WTS_INFO_CLASS.WTSUserName);
                         sessionInfo.DomainName = QuerySessionInfo(server, sessionInfo.Id, WTS_INFO_CLASS.WTSDomainName);
                         sessionInfo.ClientName = QuerySessionInfo(server, sessionInfo.Id, WTS_INFO_CLASS.WTSClientName);
                         sessionInfo.State = si.State;
 
-                        if (userName != null || domainName!=null || clientName != null || state!=null) //In this case, the caller is asking to return only matching sessions
+                        if(userName != null || domainName!=null || clientName != null || state!=null) //In this case, the caller is asking to return only matching sessions
                         {
-                            if (userName != null && !String.Equals(userName, sessionInfo.UserName, StringComparison.CurrentCultureIgnoreCase))
-                                continue; //Not matching
-                            if (clientName != null && !String.Equals(clientName, sessionInfo.ClientName, StringComparison.CurrentCultureIgnoreCase))
-                                continue; //Not matching
-                            if (domainName != null && !String.Equals(domainName, sessionInfo.DomainName, StringComparison.CurrentCultureIgnoreCase))
-                                continue; //Not matching
-                            if (state != null && sessionInfo.State != state.Value)
-                                continue;
+                            if(userName != null && !String.Equals(userName, sessionInfo.UserName, StringComparison.CurrentCultureIgnoreCase)) { continue; }
+                            if(clientName != null && !String.Equals(clientName, sessionInfo.ClientName, StringComparison.CurrentCultureIgnoreCase)) { continue; }
+                            if(domainName != null && !String.Equals(domainName, sessionInfo.DomainName, StringComparison.CurrentCultureIgnoreCase)) { continue; }
+                            if(state != null && sessionInfo.State != state.Value) { continue; }
                         }
 
                         sessions.Add(sessionInfo);
@@ -168,10 +164,11 @@ namespace Terminals
         public static SessionInfo GetCurrentSession(string serverName, string userName, string domainName, string clientName)
         {
             List<SessionInfo> sessions = ListSessions(serverName, userName, domainName, clientName, WTS_CONNECTSTATE_CLASS.WTSActive);
-            if (sessions.Count == 0)
-                return null;
-            if (sessions.Count > 1)
-                throw new Exception("Duplicate sessions found for user");
+
+            if(sessions.Count == 0) { return null; }
+
+            if(sessions.Count > 1) { throw new InvalidOperationException("Duplicate sessions found for user"); }
+
             return sessions[0];
         }
     }

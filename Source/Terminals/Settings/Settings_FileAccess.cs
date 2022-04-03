@@ -29,9 +29,9 @@ namespace Terminals.Configuration
             get { return fileLocations; }
         }
 
-        private System.Configuration.Configuration _config = null;
+        private SysConfig.Configuration _config = null;
 
-        private System.Configuration.Configuration Config
+        private SysConfig.Configuration Config
         {
             get
             {
@@ -157,7 +157,7 @@ namespace Terminals.Configuration
             fileWatcher.StopObservation();
             Config.Save();
             fileWatcher.StartObservation();
-            Debug.WriteLine(String.Format("Terminals.config file saved."));
+            Debug.WriteLine("Terminals.config file saved.");
         }
 
         private System.Configuration.Configuration GetConfiguration()
@@ -253,7 +253,7 @@ namespace Terminals.Configuration
             PropertyInfo[] propList = typeof(Settings).GetProperties();
 
             // read all the xml from the erroring file
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new XmlDocument() { XmlResolver = null };
             doc.LoadXml(File.ReadAllText(tempFile));
 
             // get the settings root

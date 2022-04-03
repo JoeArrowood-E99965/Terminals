@@ -47,11 +47,11 @@ namespace Terminals
 
             if(!EnsureDataAreWriteAble()) { return; }
             Logging.Info("Start state 5 Complete:    User account control");
-            
-            if (commandLine.SingleInstance && SingleInstanceApplication.Instance.NotifyExisting(commandLine)) { return; }
+
+            if(commandLine.SingleInstance && SingleInstanceApplication.Instance.NotifyExisting(commandLine)) { return; }
 
             Logging.Info("Start state 6 Complete:    Set Single instance mode");
-            
+
             var connectionManager = new ConnectionManager(new PluginsLoader(settings));
             var favoriteIcons = new FavoriteIcons(connectionManager);
             var persistenceFactory = new PersistenceFactory(settings, connectionManager, favoriteIcons);
@@ -126,7 +126,7 @@ namespace Terminals
         {
             bool hasDataAccess = FileLocations.UserHasAccessToDataDirectory();
 
-            if (!hasDataAccess)
+            if(!hasDataAccess)
             {
                 string message = $"Write Access is denied to:\r\n{FileLocations.WriteAccessLock}\r\n" +
                                   "Please make sure you have write permissions to the data directory";
@@ -141,7 +141,7 @@ namespace Terminals
 
         private static void ShowFirstRunWizard(Settings settings, IPersistence persistence, ConnectionManager connectionManager)
         {
-            if (settings.ShowWizard)
+            if(settings.ShowWizard)
             {
                 // settings file doesn't exist
 
@@ -167,7 +167,7 @@ namespace Terminals
         /// <summary>
         ///     dump out common/useful debugging data at app start
         /// </summary>
-        
+
         private static void LogGeneralProperties()
         {
             Logging.Info($"Command Line:             {Environment.CommandLine}");
@@ -198,7 +198,7 @@ namespace Terminals
         {
             var commandline = new CommandLineArgs();
             var cmdLineArgs = Environment.GetCommandLineArgs();
-            
+
             Parser.ParseArguments(cmdLineArgs, commandline);
             settings.FileLocations.AssignCustomFileLocations(commandline.configFile, commandline.favoritesFile, commandline.credentialsFile);
 
