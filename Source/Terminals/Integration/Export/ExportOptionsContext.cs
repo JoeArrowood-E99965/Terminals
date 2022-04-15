@@ -5,7 +5,7 @@ namespace Terminals.Integration.Export
 {
     public class ExportOptionsContext : IExportOptionsContext
     {
-        private readonly FavoriteConfigurationSecurity favoriteSecurity;
+        private readonly FavoriteConfigurationSecurity _favoriteSecurity;
 
         public XmlTextWriter Writer { get; private set; }
 
@@ -13,20 +13,24 @@ namespace Terminals.Integration.Export
 
         public FavoriteConfigurationElement Favorite { get; private set; }
 
-        public string TsgwPassword { get { return this.favoriteSecurity.TsgwPassword; } }
+        public string TsgwPassword { get { return _favoriteSecurity.TsgwPassword; } }
+
+        // ------------------------------------------------
 
         internal ExportOptionsContext(XmlTextWriter writer, FavoriteConfigurationSecurity favoriteSecurity,
-            bool includePasswords, FavoriteConfigurationElement favorite)
+                                      bool includePasswords, FavoriteConfigurationElement favorite)
         {
-            this.favoriteSecurity = favoriteSecurity;
-            this.Writer = writer;
-            this.IncludePasswords = includePasswords;
-            this.Favorite = favorite;
+            Writer = writer;
+            Favorite = favorite;
+            IncludePasswords = includePasswords;
+            _favoriteSecurity = favoriteSecurity;
         }
 
-        public void WriteElementString(string elementName, string value)
+        // ------------------------------------------------
+
+        public void WriteElementString(string elementName, string elementValue)
         {
-            this.Writer.WriteElementString(elementName, value);
+            Writer.WriteElementString(elementName, elementValue);
         }
     }
 }

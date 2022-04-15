@@ -1,186 +1,186 @@
 using System;
-using System.Collections.Generic;
+using System.Text;
 using System.Configuration;
-using Terminals.Common.Configuration;
+using System.Collections.Generic;
+
 using Terminals.Converters;
+using Terminals.Common.Configuration;
 
 namespace Terminals
 {
+    /// ---------------------------------------------------
     /// <summary>
-    /// If adding a value here, update constructor, Clone() and native Export and Import.
+    ///     If adding a value here, update constructor, 
+    ///     Clone() and native Export and Import.
     /// </summary>
+
     [Serializable]
     public class FavoriteConfigurationElement : ConfigurationElement, ICloneable
     {
         private const int DEFAULT_PORT = 3389;
         private const string DEFAULT_PROTOCOL = "RDP";
         private const string DEFAULT_BACKCOLOR = "Black";
-        private const string DEFAULT_CURSORCOLOR = "Green";
         private const string DEFAULT_TEXTCOLOR = "White";
+        private const string DEFAULT_CURSORCOLOR = "Green";
+        private const string DOMAIN_ELEMENT = "domainName";
+        private const string USERNAME_ELEMENT = "userName";
 
-        public FavoriteConfigurationElement(String name): this()
+        // ------------------------------------------------
+
+        public FavoriteConfigurationElement()
+        { }
+
+        // ------------------------------------------------
+
+        public FavoriteConfigurationElement(String name) : this()
         {
             Name = name;
         }
 
-        public FavoriteConfigurationElement()
-        {
-        }
+        // ------------------------------------------------
 
-        public override String ToString()
-        {
-            string domain = String.Empty;
-            if(!String.IsNullOrEmpty(this.DomainName))
-                domain = this.DomainName + "\\";
-
-            return String.Format(@"Favorite:{0}({1})={2}{3}:{4}",
-                this.Name, this.Protocol, domain, this.ServerName, this.Port);
-        }
-
-        public Int32 PerformanceFlags
+        public int PerformanceFlags
         {
             get
             {
-                Int32 result = 0;
+                var result = 0;
 
-                if (DisableCursorShadow) result += (Int32)PerfomanceOptions.TS_PERF_DISABLE_CURSOR_SHADOW;
-                if (DisableCursorBlinking) result += (Int32)PerfomanceOptions.TS_PERF_DISABLE_CURSORSETTINGS;
-                if (DisableFullWindowDrag) result += (Int32)PerfomanceOptions.TS_PERF_DISABLE_FULLWINDOWDRAG;
-                if (DisableMenuAnimations) result += (Int32)PerfomanceOptions.TS_PERF_DISABLE_MENUANIMATIONS;
-                if (DisableTheming) result += (Int32)PerfomanceOptions.TS_PERF_DISABLE_THEMING;
-                if (DisableWallPaper) result += (Int32)PerfomanceOptions.TS_PERF_DISABLE_WALLPAPER;
-                if (EnableDesktopComposition) result += (Int32)PerfomanceOptions.TS_PERF_ENABLE_DESKTOP_COMPOSITION;
-                if (EnableFontSmoothing) result += (Int32)PerfomanceOptions.TS_PERF_ENABLE_FONT_SMOOTHING;
+                if(DisableCursorShadow) result += (int) PerfomanceOptions.TS_PERF_DISABLE_CURSOR_SHADOW;
+                if(DisableCursorBlinking) result += (int) PerfomanceOptions.TS_PERF_DISABLE_CURSORSETTINGS;
+                if(DisableFullWindowDrag) result += (int) PerfomanceOptions.TS_PERF_DISABLE_FULLWINDOWDRAG;
+                if(DisableMenuAnimations) result += (int) PerfomanceOptions.TS_PERF_DISABLE_MENUANIMATIONS;
+                if(DisableTheming) result += (int) PerfomanceOptions.TS_PERF_DISABLE_THEMING;
+                if(DisableWallPaper) result += (int) PerfomanceOptions.TS_PERF_DISABLE_WALLPAPER;
+                if(EnableDesktopComposition) result += (int) PerfomanceOptions.TS_PERF_ENABLE_DESKTOP_COMPOSITION;
+                if(EnableFontSmoothing) result += (int) PerfomanceOptions.TS_PERF_ENABLE_FONT_SMOOTHING;
 
                 return result;
             }
         }
 
-        #region ICloneable Members
+        // ------------------------------------------------
 
         public object Clone()
         {
-            FavoriteConfigurationElement fav = new FavoriteConfigurationElement
-                                                   {
-                                                       AcceleratorPassthrough = this.AcceleratorPassthrough,
-                                                       AllowBackgroundInput = this.AllowBackgroundInput,
-                                                       AuthMethod = this.AuthMethod,
-                                                       BitmapPeristence = this.BitmapPeristence,
-                                                       Colors = this.Colors,
-                                                       ConnectionTimeout = this.ConnectionTimeout,
-                                                       ConnectToConsole = this.ConnectToConsole,
-                                                       ConsoleBackColor = this.ConsoleBackColor,
-                                                       ConsoleCols = this.ConsoleCols,
-                                                       ConsoleCursorColor = this.ConsoleCursorColor,
-                                                       ConsoleFont = this.ConsoleFont,
-                                                       ConsoleRows = this.ConsoleRows,
-                                                       ConsoleTextColor = this.ConsoleTextColor,
-                                                       Credential = this.Credential,
-                                                       DesktopShare = this.DesktopShare,
-                                                       DesktopSize = this.DesktopSize,
-                                                       DesktopSizeHeight = this.DesktopSizeHeight,
-                                                       DesktopSizeWidth = this.DesktopSizeWidth,
-                                                       DisableControlAltDelete = this.DisableControlAltDelete,
-                                                       DisableCursorBlinking = this.DisableCursorBlinking,
-                                                       DisableCursorShadow = this.DisableCursorShadow,
-                                                       DisableFullWindowDrag = this.DisableFullWindowDrag,
-                                                       DisableMenuAnimations = this.DisableMenuAnimations,
-                                                       DisableTheming = this.DisableTheming,
-                                                       DisableWallPaper = this.DisableWallPaper,
-                                                       DisableWindowsKey = this.DisableWindowsKey,
-                                                       DisplayConnectionBar = this.DisplayConnectionBar,
-                                                       DomainName = this.DomainName,
-                                                       DoubleClickDetect = this.DoubleClickDetect,
-                                                       EnableCompression = this.EnableCompression,
-                                                       EnableDesktopComposition = this.EnableDesktopComposition,
-                                                       EnableEncryption = this.EnableCompression,
-                                                       EnableFontSmoothing = this.EnableFontSmoothing,
-                                                       EnableSecuritySettings = this.EnableSecuritySettings,
-                                                       EnableTLSAuthentication = this.EnableTLSAuthentication,
-                                                       EnableNLAAuthentication = this.EnableNLAAuthentication,
-                                                       EncryptedPassword = this.EncryptedPassword,
-                                                       ExecuteBeforeConnect = this.ExecuteBeforeConnect,
-                                                       ExecuteBeforeConnectArgs = this.ExecuteBeforeConnectArgs,
-                                                       ExecuteBeforeConnectCommand = this.ExecuteBeforeConnectCommand,
-                                                       ExecuteBeforeConnectInitialDirectory = this.ExecuteBeforeConnectInitialDirectory,
-                                                       ExecuteBeforeConnectWaitForExit = this.ExecuteBeforeConnectWaitForExit,
-                                                       GrabFocusOnConnect = this.GrabFocusOnConnect,
-                                                       ICAApplicationName = this.ICAApplicationName,
-                                                       ICAApplicationWorkingFolder = this.ICAApplicationWorkingFolder,
-                                                       ICAApplicationPath = this.ICAApplicationPath,
-                                                       IcaClientINI = this.IcaClientINI,
-                                                       IcaEnableEncryption = this.IcaEnableEncryption,
-                                                       IcaEncryptionLevel = this.IcaEncryptionLevel,
-                                                       IcaServerINI = this.IcaServerINI,
-                                                       IdleTimeout = this.IdleTimeout,
-                                                       KeyTag = this.KeyTag,
-                                                       Name = this.Name,
-                                                       NewWindow = this.NewWindow,
-                                                       Notes = this.Notes,
-                                                       OverallTimeout = this.OverallTimeout,
-                                                       SshSessionName = this.SshSessionName,
-                                                       SshVerbose = this.SshVerbose,
-                                                       SshEnablePagentAuthentication = this.SshEnablePagentAuthentication,
-                                                       SshEnablePagentForwarding = this.SshEnablePagentForwarding,
-                                                       SshX11Forwarding = this.SshX11Forwarding,
-                                                       SshEnableCompression = this.SshEnableCompression,
-                                                       SshVersion = this.SshVersion,
-                                                       Port = this.Port,
-                                                       Protocol = this.Protocol,
-                                                       RedirectClipboard = this.RedirectClipboard,
-                                                       RedirectDevices = this.RedirectDevices,
-                                                       RedirectedDrives = this.RedirectedDrives,
-                                                       RedirectPorts = this.RedirectPorts,
-                                                       RedirectPrinters = this.RedirectPrinters,
-                                                       RedirectSmartCards = this.RedirectSmartCards,
-                                                       SecurityFullScreen = this.SecurityFullScreen,
-                                                       SecurityStartProgram = this.SecurityStartProgram,
-                                                       SecurityWorkingFolder = this.SecurityWorkingFolder,
-                                                       ServerName = this.ServerName,
-                                                       ShutdownTimeout = this.ShutdownTimeout,
-                                                       Sounds = this.Sounds,
-                                                       SSH1 = this.SSH1,
-                                                       Tags = this.Tags,
-                                                       Telnet = this.Telnet,
-                                                       TelnetBackColor = this.TelnetBackColor,
-                                                       TelnetCols = this.TelnetCols,
-                                                       TelnetCursorColor = this.TelnetCursorColor,
-                                                       TelnetFont = this.TelnetFont,
-                                                       TelnetRows = this.TelnetRows,
-                                                       TelnetTextColor = this.TelnetTextColor,
-                                                       ToolBarIcon = this.ToolBarIcon,
-                                                       TsgwCredsSource = this.TsgwCredsSource,
-                                                       TsgwDomain = this.TsgwDomain,
-                                                       TsgwEncryptedPassword = this.TsgwEncryptedPassword,
-                                                       TsgwHostname = this.TsgwHostname,
-                                                       TsgwSeparateLogin = this.TsgwSeparateLogin,
-                                                       TsgwUsageMethod = this.TsgwUsageMethod,
-                                                       TsgwUsername = this.TsgwUsername,
-                                                       Url = this.Url,
-                                                       UserName = this.UserName,
-                                                       VMRCAdministratorMode = this.VMRCAdministratorMode,
-                                                       VMRCReducedColorsMode = this.VMRCReducedColorsMode,
-                                                       VncAutoScale = this.VncAutoScale,
-                                                       VncDisplayNumber = this.VncDisplayNumber,
-                                                       VncViewOnly = this.VncViewOnly,
-                                                       SSHKeyFile = this.SSHKeyFile,
-                                                       TelnetSessionName = this.TelnetSessionName,
-                                                       TelnetVerbose = this.TelnetVerbose
-                                                   };
-            return fav;
+            var fav = new FavoriteConfigurationElement
+            {
+                Url = Url,
+                Port = Port,
+                SSH1 = SSH1,
+                Tags = Tags,
+                Name = Name,
+                Notes = Notes,
+                Colors = Colors,
+                Telnet = Telnet,
+                KeyTag = KeyTag,
+                Sounds = Sounds,
+                Protocol = Protocol,
+                UserName = UserName,
+                NewWindow = NewWindow,
+                AuthMethod = AuthMethod,
+                Credential = Credential,
+                DomainName = DomainName,
+                SshVerbose = SshVerbose,
+                SshVersion = SshVersion,
+                ServerName = ServerName,
+                TelnetCols = TelnetCols,
+                TelnetFont = TelnetFont,
+                TelnetRows = TelnetRows,
+                TsgwDomain = TsgwDomain,
+                SSHKeyFile = SSHKeyFile,
+                ConsoleCols = ConsoleCols,
+                ConsoleRows = ConsoleRows,
+                ConsoleFont = ConsoleFont,
+                DesktopSize = DesktopSize,
+                IdleTimeout = IdleTimeout,
+                ToolBarIcon = ToolBarIcon,
+                VncViewOnly = VncViewOnly,
+                DesktopShare = DesktopShare,
+                IcaClientINI = IcaClientINI,
+                IcaServerINI = IcaServerINI,
+                TsgwHostname = TsgwHostname,
+                TsgwUsername = TsgwUsername,
+                VncAutoScale = VncAutoScale,
+                RedirectPorts = RedirectPorts,
+                TelnetVerbose = TelnetVerbose,
+                OverallTimeout = OverallTimeout,
+                SshSessionName = SshSessionName,
+                DisableTheming = DisableTheming,
+                RedirectDevices = RedirectDevices,
+                ShutdownTimeout = ShutdownTimeout,
+                TelnetBackColor = TelnetBackColor,
+                TelnetTextColor = TelnetTextColor,
+                TsgwCredsSource = TsgwCredsSource,
+                TsgwUsageMethod = TsgwUsageMethod,
+                BitmapPeristence = BitmapPeristence,
+                ConnectToConsole = ConnectToConsole,
+                ConsoleBackColor = ConsoleBackColor,
+                ConsoleTextColor = ConsoleTextColor,
+                DesktopSizeWidth = DesktopSizeWidth,
+                DisableWallPaper = DisableWallPaper,
+                SshX11Forwarding = SshX11Forwarding,
+                RedirectPrinters = RedirectPrinters,
+                VncDisplayNumber = VncDisplayNumber,
+                RedirectedDrives = RedirectedDrives,
+                EnableEncryption = EnableCompression,
+                ConnectionTimeout = ConnectionTimeout,
+                DesktopSizeHeight = DesktopSizeHeight,
+                DisableWindowsKey = DisableWindowsKey,
+                DoubleClickDetect = DoubleClickDetect,
+                EnableCompression = EnableCompression,
+                EncryptedPassword = EncryptedPassword,
+                RedirectClipboard = RedirectClipboard,
+                TelnetCursorColor = TelnetCursorColor,
+                TsgwSeparateLogin = TsgwSeparateLogin,
+                TelnetSessionName = TelnetSessionName,
+                ConsoleCursorColor = ConsoleCursorColor,
+                GrabFocusOnConnect = GrabFocusOnConnect,
+                ICAApplicationName = ICAApplicationName,
+                ICAApplicationPath = ICAApplicationPath,
+                IcaEncryptionLevel = IcaEncryptionLevel,
+                RedirectSmartCards = RedirectSmartCards,
+                SecurityFullScreen = SecurityFullScreen,
+                IcaEnableEncryption = IcaEnableEncryption,
+                EnableFontSmoothing = EnableFontSmoothing,
+                DisableCursorShadow = DisableCursorShadow,
+                AllowBackgroundInput = AllowBackgroundInput,
+                DisplayConnectionBar = DisplayConnectionBar,
+                SshEnableCompression = SshEnableCompression,
+                SecurityStartProgram = SecurityStartProgram,
+                ExecuteBeforeConnect = ExecuteBeforeConnect,
+                DisableCursorBlinking = DisableCursorBlinking,
+                DisableFullWindowDrag = DisableFullWindowDrag,
+                DisableMenuAnimations = DisableMenuAnimations,
+                SecurityWorkingFolder = SecurityWorkingFolder,
+                TsgwEncryptedPassword = TsgwEncryptedPassword,
+                VMRCAdministratorMode = VMRCAdministratorMode,
+                VMRCReducedColorsMode = VMRCReducedColorsMode,
+                AcceleratorPassthrough = AcceleratorPassthrough,
+                EnableSecuritySettings = EnableSecuritySettings,
+                EnableTLSAuthentication = EnableTLSAuthentication,
+                EnableNLAAuthentication = EnableNLAAuthentication,
+                DisableControlAltDelete = DisableControlAltDelete,
+                EnableDesktopComposition = EnableDesktopComposition,
+                ExecuteBeforeConnectArgs = ExecuteBeforeConnectArgs,
+                SshEnablePagentForwarding = SshEnablePagentForwarding,
+                ExecuteBeforeConnectCommand = ExecuteBeforeConnectCommand,
+                ICAApplicationWorkingFolder = ICAApplicationWorkingFolder,
+                SshEnablePagentAuthentication = SshEnablePagentAuthentication,
+                ExecuteBeforeConnectWaitForExit = ExecuteBeforeConnectWaitForExit,
+                ExecuteBeforeConnectInitialDirectory = ExecuteBeforeConnectInitialDirectory,
+            };
 
+            return fav;
         }
 
-        #endregion
-       
-        #region Serializable properties
+        // ------------------------------------------------
 
         [ConfigurationProperty("telnet", IsRequired = false, DefaultValue = true)]
         public Boolean Telnet
         {
             get
             {
-                return (Boolean)this["telnet"];
+                return (Boolean) this["telnet"];
             }
             set
             {
@@ -188,12 +188,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("telnetrows", IsRequired = false, DefaultValue = 33)]
-        public Int32 TelnetRows
+        public int TelnetRows
         {
             get
             {
-                return (Int32)this["telnetrows"];
+                return (int) this["telnetrows"];
             }
             set
             {
@@ -201,12 +203,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("telnetcols", IsRequired = false, DefaultValue = 110)]
-        public Int32 TelnetCols
+        public int TelnetCols
         {
             get
             {
-                return (Int32)this["telnetcols"];
+                return (int) this["telnetcols"];
             }
             set
             {
@@ -214,115 +218,106 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("shutdownTimeout", IsRequired = false, DefaultValue = 10)]
-        public Int32 ShutdownTimeout
+        public int ShutdownTimeout
         {
             get
             {
-                Int32 val = (Int32)this["shutdownTimeout"];
-                if (val > 600)
-                    val = 600;
+                int val = (int) this["shutdownTimeout"];
 
-                if (val < 10)
-                    val = 10;
+                if(val > 600) { val = 600; }
+                if(val < 10) { val = 10; }
 
                 return val;
             }
             set
             {
-                if (value > 600) 
-                    value = 600;
-
-                if (value < 10) 
-                    value = 10;
+                if(value > 600) { value = 600; }
+                if(value < 10) { value = 10; }
 
                 this["shutdownTimeout"] = value;
             }
         }
+
+        // ------------------------------------------------
+
         [ConfigurationProperty("overallTimeout", IsRequired = false, DefaultValue = 600)]
-        public Int32 OverallTimeout
+        public int OverallTimeout
         {
             get
             {
-                Int32 val = (Int32)this["overallTimeout"];
-                if (val > 600) 
-                    val = 600;
+                int val = (int) this["overallTimeout"];
 
-                if (val < 10) 
-                    val = 10;
+                if(val > 600) { val = 600; }
+                if(val < 10) { val = 10; }
 
                 return val;
             }
             set
             {
-                if (value > 600) 
-                    value = 600;
-
-                if (value < 0) 
-                    value = 0;
+                if(value > 600) { value = 600; }
+                if(value < 10) { value = 10; }
 
                 this["overallTimeout"] = value;
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("connectionTimeout", IsRequired = false, DefaultValue = 600)]
-        public Int32 ConnectionTimeout
+        public int ConnectionTimeout
         {
             get
             {
-                Int32 val = (Int32)this["connectionTimeout"];
-                if (val > 600) 
-                    val = 600;
+                int val = (int) this["connectionTimeout"];
 
-                if (val < 10) 
-                    val = 10;
+                if(val > 600) { val = 600; }
+                if(val < 10) { val = 10; }
 
                 return val;
             }
             set
             {
-                if (value > 600) 
-                    value = 600;
-
-                if (value < 0) 
-                    value = 0;
+                if(value > 600) { value = 600; }
+                if(value < 10) { value = 10; }
 
                 this["connectionTimeout"] = value;
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("idleTimeout", IsRequired = false, DefaultValue = 240)]
-        public Int32 IdleTimeout
+        public int IdleTimeout
         {
             get
             {
-                Int32 val = (Int32)this["idleTimeout"];
-                if (val > 600) 
-                    val = 600;
+                int val = (int) this["idleTimeout"];
 
-                if (val < 10) 
-                    val = 10;
+                if(val > 600) { val = 600; }
+                if(val < 10) { val = 10; }
 
                 return val;
             }
             set
             {
-                if (value > 240) 
-                    value = 240;
-
-                if (value < 0) 
-                    value = 0;
+                if(value > 240) { value = 240; }
+                if(value < 0) { value = 0; }
 
                 this["idleTimeout"] = value;
             }
         }
+
+        // ------------------------------------------------
 
         [ConfigurationProperty("securityWorkingFolder", IsRequired = false, DefaultValue = "")]
         public String SecurityWorkingFolder
         {
             get
             {
-                return (String)this["securityWorkingFolder"];
+                return (String) this["securityWorkingFolder"];
             }
             set
             {
@@ -330,15 +325,17 @@ namespace Terminals
             }
         }
 
+        /// -----------------------------------------------
         /// <summary>
-        /// added in v3.4
+        ///     added in v3.4
         /// </summary>
+
         [ConfigurationProperty("SSHKeyFile", IsRequired = false, DefaultValue = "")]
         public String SSHKeyFile
         {
             get
             {
-                return (String)this["SSHKeyFile"];
+                return (String) this["SSHKeyFile"];
             }
             set
             {
@@ -346,12 +343,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("securityStartProgram", IsRequired = false, DefaultValue = "")]
         public String SecurityStartProgram
         {
             get
             {
-                return (String)this["securityStartProgram"];
+                return (String) this["securityStartProgram"];
             }
             set
             {
@@ -359,12 +358,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("credential", IsRequired = false, DefaultValue = "")]
         public String Credential
         {
             get
             {
-                return (String)this["credential"];
+                return (String) this["credential"];
             }
             set
             {
@@ -372,12 +373,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("securityFullScreen", IsRequired = false, DefaultValue = false)]
         public Boolean SecurityFullScreen
         {
             get
             {
-                return (Boolean)this["securityFullScreen"];
+                return (Boolean) this["securityFullScreen"];
             }
             set
             {
@@ -385,12 +388,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("enableSecuritySettings", IsRequired = false, DefaultValue = false)]
         public Boolean EnableSecuritySettings
         {
             get
             {
-                return (Boolean)this["enableSecuritySettings"];
+                return (Boolean) this["enableSecuritySettings"];
             }
             set
             {
@@ -398,12 +403,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("grabFocusOnConnect", IsRequired = false, DefaultValue = false)]
         public Boolean GrabFocusOnConnect
         {
             get
             {
-                return (Boolean)this["grabFocusOnConnect"];
+                return (Boolean) this["grabFocusOnConnect"];
             }
             set
             {
@@ -411,12 +418,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("enableEncryption", IsRequired = false, DefaultValue = false)]
         public Boolean EnableEncryption
         {
             get
             {
-                return (Boolean)this["enableEncryption"];
+                return (Boolean) this["enableEncryption"];
             }
             set
             {
@@ -424,12 +433,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("disableWindowsKey", IsRequired = false, DefaultValue = false)]
         public Boolean DisableWindowsKey
         {
             get
             {
-                return (Boolean)this["disableWindowsKey"];
+                return (Boolean) this["disableWindowsKey"];
             }
             set
             {
@@ -437,12 +448,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("doubleClickDetect", IsRequired = false, DefaultValue = false)]
         public Boolean DoubleClickDetect
         {
             get
             {
-                return (Boolean)this["doubleClickDetect"];
+                return (Boolean) this["doubleClickDetect"];
             }
             set
             {
@@ -450,12 +463,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("displayConnectionBar", IsRequired = false, DefaultValue = false)]
         public Boolean DisplayConnectionBar
         {
             get
             {
-                return (Boolean)this["displayConnectionBar"];
+                return (Boolean) this["displayConnectionBar"];
             }
             set
             {
@@ -463,12 +478,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("disableControlAltDelete", IsRequired = false, DefaultValue = false)]
         public Boolean DisableControlAltDelete
         {
             get
             {
-                return (Boolean)this["disableControlAltDelete"];
+                return (Boolean) this["disableControlAltDelete"];
             }
             set
             {
@@ -476,12 +493,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("acceleratorPassthrough", IsRequired = false, DefaultValue = false)]
         public Boolean AcceleratorPassthrough
         {
             get
             {
-                return (Boolean)this["acceleratorPassthrough"];
+                return (Boolean) this["acceleratorPassthrough"];
             }
             set
             {
@@ -489,12 +508,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("enableCompression", IsRequired = false, DefaultValue = false)]
         public Boolean EnableCompression
         {
             get
             {
-                return (Boolean)this["enableCompression"];
+                return (Boolean) this["enableCompression"];
             }
             set
             {
@@ -502,12 +523,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("bitmapPeristence", IsRequired = false, DefaultValue = false)]
         public Boolean BitmapPeristence
         {
             get
             {
-                return (Boolean)this["bitmapPeristence"];
+                return (Boolean) this["bitmapPeristence"];
             }
             set
             {
@@ -515,12 +538,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("enableTLSAuthentication", IsRequired = false, DefaultValue = false)]
         public Boolean EnableTLSAuthentication
         {
             get
             {
-                return (Boolean)this["enableTLSAuthentication"];
+                return (Boolean) this["enableTLSAuthentication"];
             }
             set
             {
@@ -528,12 +553,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("enableNLAAuthentication", IsRequired = false, DefaultValue = false)]
         public Boolean EnableNLAAuthentication
         {
             get
             {
-                return (Boolean)this["enableNLAAuthentication"];
+                return (Boolean) this["enableNLAAuthentication"];
             }
             set
             {
@@ -541,12 +568,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("allowBackgroundInput", IsRequired = false, DefaultValue = false)]
         public Boolean AllowBackgroundInput
         {
             get
             {
-                return (Boolean)this["allowBackgroundInput"];
+                return (Boolean) this["allowBackgroundInput"];
             }
             set
             {
@@ -554,12 +583,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("ICAApplicationName", IsRequired = false, DefaultValue = "")]
         public String ICAApplicationName
         {
             get
             {
-                return (String)this["ICAApplicationName"];
+                return (String) this["ICAApplicationName"];
             }
             set
             {
@@ -567,12 +598,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("ICAApplicationWorkingFolder", IsRequired = false, DefaultValue = "")]
         public String ICAApplicationWorkingFolder
         {
             get
             {
-                return (String)this["ICAApplicationWorkingFolder"];
+                return (String) this["ICAApplicationWorkingFolder"];
             }
             set
             {
@@ -580,12 +613,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("ICAApplicationPath", IsRequired = false, DefaultValue = "")]
         public String ICAApplicationPath
         {
             get
             {
-                return (String)this["ICAApplicationPath"];
+                return (String) this["ICAApplicationPath"];
             }
             set
             {
@@ -593,101 +628,149 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
 
         [ConfigurationProperty("sshSessionName", IsRequired = false, DefaultValue = "")]
-        public String SshSessionName {
-            get {
-                return (String)this["sshSessionName"];
+        public String SshSessionName
+        {
+            get
+            {
+                return (String) this["sshSessionName"];
             }
-            set {
+            set
+            {
                 this["sshSessionName"] = value;
             }
         }
+
+        // ------------------------------------------------
+
         [ConfigurationProperty("sshVerbose", IsRequired = false, DefaultValue = false)]
-        public bool SshVerbose {
-            get {
-                return (Boolean)this["sshVerbose"];
+        public bool SshVerbose
+        {
+            get
+            {
+                return (Boolean) this["sshVerbose"];
             }
-            set {
+            set
+            {
                 this["sshVerbose"] = value;
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("sshEnablePagentAuthentication", IsRequired = false, DefaultValue = false)]
-        public bool SshEnablePagentAuthentication {
-            get {
-                return (Boolean)this["sshEnablePagentAuthentication"];
+        public bool SshEnablePagentAuthentication
+        {
+            get
+            {
+                return (Boolean) this["sshEnablePagentAuthentication"];
             }
-            set {
+            set
+            {
                 this["sshEnablePagentAuthentication"] = value;
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("sshEnablePagentForwarding", IsRequired = false, DefaultValue = false)]
-        public bool SshEnablePagentForwarding {
-            get {
-                return (Boolean)this["sshEnablePagentForwarding"];
+        public bool SshEnablePagentForwarding
+        {
+            get
+            {
+                return (Boolean) this["sshEnablePagentForwarding"];
             }
-            set {
+            set
+            {
                 this["sshEnablePagentForwarding"] = value;
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("sshX11Forwarding", IsRequired = false, DefaultValue = false)]
-        public Boolean SshX11Forwarding {
-            get {
-                return (Boolean)this["sshX11Forwarding"];
+        public Boolean SshX11Forwarding
+        {
+            get
+            {
+                return (Boolean) this["sshX11Forwarding"];
             }
-            set {
+            set
+            {
                 this["sshX11Forwarding"] = value;
             }
         }
+
+        // ------------------------------------------------
+
         [ConfigurationProperty("sshEnableCompression", IsRequired = false, DefaultValue = false)]
-        public Boolean SshEnableCompression {
-            get {
-                return (Boolean)this["sshEnableCompression"];
+        public Boolean SshEnableCompression
+        {
+            get
+            {
+                return (Boolean) this["sshEnableCompression"];
             }
-            set {
+            set
+            {
                 this["sshEnableCompression"] = value;
             }
         }
 
-        [ConfigurationProperty("sshVersion", IsRequired = false, DefaultValue = (byte)0)]
-        public byte SshVersion {
-            get {
-                return (byte)this["sshVersion"];
+        // ------------------------------------------------
+
+        [ConfigurationProperty("sshVersion", IsRequired = false, DefaultValue = (byte) 0)]
+        public byte SshVersion
+        {
+            get
+            {
+                return (byte) this["sshVersion"];
             }
-            set {
+            set
+            {
                 this["sshVersion"] = value;
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("telnetSessionName", IsRequired = false, DefaultValue = "")]
-        public String TelnetSessionName {
-            get {
-                return (String)this["telnetSessionName"];
+        public String TelnetSessionName
+        {
+            get
+            {
+                return (String) this["telnetSessionName"];
             }
-            set {
+            set
+            {
                 this["telnetSessionName"] = value;
             }
         }
+
+        // ------------------------------------------------
+
         [ConfigurationProperty("telnetVerbose", IsRequired = false, DefaultValue = false)]
-        public bool TelnetVerbose {
-            get {
-                return (Boolean)this["telnetVerbose"];
+        public bool TelnetVerbose
+        {
+            get
+            {
+                return (Boolean) this["telnetVerbose"];
             }
-            set {
+            set
+            {
                 this["telnetVerbose"] = value;
             }
         }
 
+        // ------------------------------------------------
 
         [ConfigurationProperty("vmrcreducedcolorsmode", IsRequired = false, DefaultValue = false)]
         public Boolean VMRCReducedColorsMode
         {
             get
             {
-                return (Boolean)this["vmrcreducedcolorsmode"];
+                return (Boolean) this["vmrcreducedcolorsmode"];
             }
             set
             {
@@ -695,48 +778,59 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("vmrcadministratormode", IsRequired = false, DefaultValue = false)]
         public Boolean VMRCAdministratorMode
         {
             get
             {
-                return (Boolean)this["vmrcadministratormode"];
+                return (Boolean) this["vmrcadministratormode"];
             }
             set
             {
                 this["vmrcadministratormode"] = value;
             }
         }
+
+        // ------------------------------------------------
+
         [ConfigurationProperty("ssh1", IsRequired = false, DefaultValue = false)]
         public Boolean SSH1
         {
             get
             {
-                return (Boolean)this["ssh1"];
+                return (Boolean) this["ssh1"];
             }
             set
             {
                 this["ssh1"] = value;
             }
         }
+
+        // ------------------------------------------------
+
         [ConfigurationProperty("consolerows", IsRequired = false, DefaultValue = 33)]
-        public Int32 ConsoleRows
+        public int ConsoleRows
         {
             get
             {
-                return (Int32)this["consolerows"];
+                return (int) this["consolerows"];
             }
             set
             {
                 this["consolerows"] = value;
             }
         }
+
+        // ------------------------------------------------
+
         [ConfigurationProperty("consolecols", IsRequired = false, DefaultValue = 110)]
-        public Int32 ConsoleCols
+        public int ConsoleCols
         {
             get
             {
-                return (Int32)this["consolecols"];
+                return (int) this["consolecols"];
             }
             set
             {
@@ -744,15 +838,20 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("consolefont", IsRequired = false, DefaultValue = "")]
         public String ConsoleFont
         {
             get
             {
-                String font = (String)this["consolefont"];
-                if (String.IsNullOrEmpty(font))
+                String font = (String) this["consolefont"];
+
+                if(String.IsNullOrEmpty(font))
+                {
                     font = FontParser.DEFAULT_FONT;
-                
+                }
+
                 return font;
             }
             set
@@ -761,12 +860,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("consolebackcolor", IsRequired = false, DefaultValue = DEFAULT_BACKCOLOR)]
         public String ConsoleBackColor
         {
             get
             {
-                return (String)this["consolebackcolor"];
+                return (String) this["consolebackcolor"];
             }
             set
             {
@@ -774,12 +875,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("consoletextcolor", IsRequired = false, DefaultValue = DEFAULT_TEXTCOLOR)]
         public String ConsoleTextColor
         {
             get
             {
-                return (String)this["consoletextcolor"];
+                return (String) this["consoletextcolor"];
             }
             set
             {
@@ -787,12 +890,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("consolecursorcolor", IsRequired = false, DefaultValue = DEFAULT_CURSORCOLOR)]
         public String ConsoleCursorColor
         {
             get
             {
-                return (String)this["consolecursorcolor"];
+                return (String) this["consolecursorcolor"];
             }
             set
             {
@@ -800,12 +905,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("protocol", IsRequired = true, DefaultValue = DEFAULT_PROTOCOL)]
         public String Protocol
         {
             get
             {
-                return (String)this["protocol"];
+                return (String) this["protocol"];
             }
             set
             {
@@ -813,25 +920,30 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("toolBarIcon", IsRequired = false, DefaultValue = "")]
         public String ToolBarIcon
         {
             get
             {
-                return (String)this["toolBarIcon"];
+                return (String) this["toolBarIcon"];
             }
             set
             {
                 this["toolBarIcon"] = value;
             }
         }
+
+        // ------------------------------------------------
+
         [ConfigurationProperty("telnetfont", IsRequired = false)]
         public String TelnetFont
         {
             get
             {
-                String font = (String)this["telnetfont"];
-                if (String.IsNullOrEmpty(font))
+                String font = (String) this["telnetfont"];
+                if(String.IsNullOrEmpty(font))
                     font = FontParser.DEFAULT_FONT;
 
                 return font;
@@ -842,12 +954,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("telnetbackcolor", IsRequired = false, DefaultValue = DEFAULT_BACKCOLOR)]
         public String TelnetBackColor
         {
             get
             {
-                return (String)this["telnetbackcolor"];
+                return (String) this["telnetbackcolor"];
             }
             set
             {
@@ -855,12 +969,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("telnettextcolor", IsRequired = false, DefaultValue = DEFAULT_TEXTCOLOR)]
         public String TelnetTextColor
         {
             get
             {
-                return (String)this["telnettextcolor"];
+                return (String) this["telnettextcolor"];
             }
             set
             {
@@ -868,12 +984,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("telnetcursorcolor", IsRequired = false, DefaultValue = DEFAULT_CURSORCOLOR)]
         public String TelnetCursorColor
         {
             get
             {
-                return (String)this["telnetcursorcolor"];
+                return (String) this["telnetcursorcolor"];
             }
             set
             {
@@ -881,12 +999,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("name", IsRequired = true)]
         public String Name
         {
             get
             {
-                return (String)this["name"];
+                return (String) this["name"];
             }
             set
             {
@@ -894,12 +1014,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("serverName", IsRequired = true)]
         public String ServerName
         {
             get
             {
-                return (String)this["serverName"];
+                return (String) this["serverName"];
             }
             set
             {
@@ -907,12 +1029,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("authMethod", DefaultValue = AuthMethod.Password)]
         public AuthMethod AuthMethod
         {
             get
             {
-                return (AuthMethod)this["authMethod"];
+                return (AuthMethod) this["authMethod"];
             }
             set
             {
@@ -920,12 +1044,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("keyTag", DefaultValue = "")]
         public String KeyTag
         {
             get
             {
-                return (String)this["keyTag"];
+                return (String) this["keyTag"];
             }
             set
             {
@@ -933,12 +1059,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("encryptedPassword", IsRequired = false)]
         public String EncryptedPassword
         {
             get
             {
-                return (String)this["encryptedPassword"];
+                return (String) this["encryptedPassword"];
             }
             set
             {
@@ -946,12 +1074,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("vncAutoScale", IsRequired = false, DefaultValue = false)]
         public Boolean VncAutoScale
         {
             get
             {
-                return (Boolean)this["vncAutoScale"];
+                return (Boolean) this["vncAutoScale"];
             }
             set
             {
@@ -959,12 +1089,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("vncViewOnly", IsRequired = false, DefaultValue = false)]
         public Boolean VncViewOnly
         {
             get
             {
-                return (Boolean)this["vncViewOnly"];
+                return (Boolean) this["vncViewOnly"];
             }
             set
             {
@@ -972,12 +1104,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("vncDisplayNumber", IsRequired = false, DefaultValue = 0)]
-        public Int32 VncDisplayNumber
+        public int VncDisplayNumber
         {
             get
             {
-                return (Int32)this["vncDisplayNumber"];
+                return (int) this["vncDisplayNumber"];
             }
             set
             {
@@ -985,13 +1119,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
 
         [ConfigurationProperty("connectToConsole", IsRequired = false)]
         public Boolean ConnectToConsole
         {
             get
             {
-                return (Boolean)this["connectToConsole"];
+                return (Boolean) this["connectToConsole"];
             }
             set
             {
@@ -999,12 +1134,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("desktopSizeHeight", IsRequired = false)]
-        public Int32 DesktopSizeHeight
+        public int DesktopSizeHeight
         {
             get
             {
-                return (Int32)this["desktopSizeHeight"];
+                return (int) this["desktopSizeHeight"];
             }
             set
             {
@@ -1012,12 +1149,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("desktopSizeWidth", IsRequired = false)]
-        public Int32 DesktopSizeWidth
+        public int DesktopSizeWidth
         {
             get
             {
-                return (Int32)this["desktopSizeWidth"];
+                return (int) this["desktopSizeWidth"];
             }
             set
             {
@@ -1025,12 +1164,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("desktopSize", IsRequired = false, DefaultValue = DesktopSize.FitToWindow)]
         public DesktopSize DesktopSize
         {
             get
             {
-                return (DesktopSize)this["desktopSize"];
+                return (DesktopSize) this["desktopSize"];
             }
             set
             {
@@ -1038,12 +1179,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("colors", IsRequired = false, DefaultValue = Colors.Bits32)]
         public Colors Colors
         {
             get
             {
-                return (Colors)this["colors"];
+                return (Colors) this["colors"];
             }
             set
             {
@@ -1051,12 +1194,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("sounds", DefaultValue = RemoteSounds.DontPlay)]
         public RemoteSounds Sounds
         {
             get
             {
-                return (RemoteSounds)this["sounds"];
+                return (RemoteSounds) this["sounds"];
             }
             set
             {
@@ -1064,12 +1209,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("redirectDrives")]
         public String redirectedDrives
         {
             get
             {
-                return (String)this["redirectDrives"];
+                return (String) this["redirectDrives"];
             }
             set
             {
@@ -1077,31 +1224,18 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         public List<String> RedirectedDrives
         {
             get
             {
                 List<String> outputList = new List<String>();
-                if (!String.IsNullOrEmpty(redirectedDrives))
-                {
-                    /* Following added for backwards compatibility
-                    if (redirectedDrives.Equals("true"))
-                    {
-                        DriveInfo[] drives = DriveInfo.GetDrives();
-                        foreach (DriveInfo drive in drives)
-                        {
-                            try
-                            {
-                                outputList.Add(drive.Name.TrimEnd("\\".ToCharArray()));
-                            }
-                            catch (Exception)
-                            { }
-                        }
-                    }
-                    */
 
-        String[] driveArray = redirectedDrives.Split(";".ToCharArray());
-                    foreach (String drive in driveArray)
+                if(!String.IsNullOrEmpty(redirectedDrives))
+                {
+                    String[] driveArray = redirectedDrives.Split(";".ToCharArray());
+                    foreach(String drive in driveArray)
                     {
                         outputList.Add(drive);
                     }
@@ -1109,26 +1243,30 @@ namespace Terminals
 
                 return outputList;
             }
+
             set
             {
-                String drives = String.Empty;
-                for (Int32 i = 0; i < value.Count; i++)
+                var drives = new StringBuilder();
+
+                for(int i = 0; i < value.Count; i++)
                 {
-                    drives += value[i];
-                    if (i < value.Count - 1)
-                        drives += ";";
+                    drives.Append(value[i]);
+
+                    if(i < value.Count - 1) { drives.Append(";"); }
                 }
 
-                redirectedDrives = drives;
+                redirectedDrives = drives.ToString();
             }
         }
+
+        // ------------------------------------------------
 
         [ConfigurationProperty("redirectPorts")]
         public Boolean RedirectPorts
         {
             get
             {
-                return (Boolean)this["redirectPorts"];
+                return (Boolean) this["redirectPorts"];
             }
             set
             {
@@ -1136,12 +1274,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("newWindow")]
         public Boolean NewWindow
         {
             get
             {
-                return (Boolean)this["newWindow"];
+                return (Boolean) this["newWindow"];
             }
             set
             {
@@ -1149,12 +1289,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("redirectPrinters")]
         public Boolean RedirectPrinters
         {
             get
             {
-                return (Boolean)this["redirectPrinters"];
+                return (Boolean) this["redirectPrinters"];
             }
             set
             {
@@ -1162,12 +1304,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("redirectSmartCards")]
         public Boolean RedirectSmartCards
         {
             get
             {
-                return (Boolean)this["redirectSmartCards"];
+                return (Boolean) this["redirectSmartCards"];
             }
             set
             {
@@ -1175,12 +1319,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("redirectClipboard", DefaultValue = true)]
         public Boolean RedirectClipboard
         {
             get
             {
-                return (Boolean)this["redirectClipboard"];
+                return (Boolean) this["redirectClipboard"];
             }
             set
             {
@@ -1188,12 +1334,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("redirectDevices")]
         public Boolean RedirectDevices
         {
             get
             {
-                return (Boolean)this["redirectDevices"];
+                return (Boolean) this["redirectDevices"];
             }
             set
             {
@@ -1201,28 +1349,38 @@ namespace Terminals
             }
         }
 
+        /// -----------------------------------------------
         /// <summary>
-        /// TSC_PROXY_MODE_NONE_DIRECT 0 (0x0)
-        /// Do not use an RD Gateway server. In the Remote Desktop Connection (RDC) client UI, the Bypass RD Gateway server for local addresses check box is cleared.
-        /// 
-        /// TSC_PROXY_MODE_DIRECT 1 (0x1)
-        /// Always use an RD Gateway server. In the RDC client UI, the Bypass RD Gateway server for local addresses check box is cleared.
-        /// 
-        /// TSC_PROXY_MODE_DETECT 2 (0x2)
-        /// Use an RD Gateway server if a direct connection cannot be made to the RD Session Host server. In the RDC client UI, the Bypass RD Gateway server for local addresses check box is selected.
-        /// 
-        /// TSC_PROXY_MODE_DEFAULT 3 (0x3)
-        /// Use the default RD Gateway server settings.
-        /// 
-        /// TSC_PROXY_MODE_NONE_DETECT 4 (0x4)
-        /// Do not use an RD Gateway server. In the RDC client UI, the Bypass RD Gateway server for local addresses check box is selected.
+        ///     TSC_PROXY_MODE_NONE_DIRECT 0 (0x0)
+        ///     Do not use an RD Gateway server. 
+        ///     In the Remote Desktop Connection (RDC) client UI, 
+        ///     the Bypass RD Gateway server for local addresses check box is cleared.
+        ///     
+        ///     TSC_PROXY_MODE_DIRECT 1 (0x1)
+        ///     Always use an RD Gateway server. 
+        ///     In the RDC client UI, the Bypass RD Gateway server 
+        ///     for local addresses check box is cleared.
+        ///     
+        ///     TSC_PROXY_MODE_DETECT 2 (0x2)
+        ///     Use an RD Gateway server if a direct connection 
+        ///     cannot be made to the RD Session Host server. 
+        ///     In the RDC client UI, the Bypass RD Gateway 
+        ///     server for local addresses check box is selected.
+        ///     
+        ///     TSC_PROXY_MODE_DEFAULT 3 (0x3)
+        ///     Use the default RD Gateway server settings.
+        ///     
+        ///     TSC_PROXY_MODE_NONE_DETECT 4 (0x4)
+        ///     Do not use an RD Gateway server. In the RDC client UI, 
+        ///     the Bypass RD Gateway server for local addresses check box is selected.
         /// </summary>
+
         [ConfigurationProperty("tsgwUsageMethod", DefaultValue = 0)]
-        public Int32 TsgwUsageMethod
+        public int TsgwUsageMethod
         {
             get
             {
-                return (Int32)this["tsgwUsageMethod"];
+                return (int) this["tsgwUsageMethod"];
             }
             set
             {
@@ -1230,12 +1388,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("tsgwHostname", DefaultValue = "")]
         public String TsgwHostname
         {
             get
             {
-                return (String)this["tsgwHostname"];
+                return (String) this["tsgwHostname"];
             }
             set
             {
@@ -1243,12 +1403,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("tsgwCredsSource", DefaultValue = 0)]
-        public Int32 TsgwCredsSource
+        public int TsgwCredsSource
         {
             get
             {
-                return (Int32)this["tsgwCredsSource"];
+                return (int) this["tsgwCredsSource"];
             }
             set
             {
@@ -1256,12 +1418,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("tsgwSeparateLogin", DefaultValue = false)]
         public Boolean TsgwSeparateLogin
         {
             get
             {
-                return (Boolean)this["tsgwSeparateLogin"];
+                return (Boolean) this["tsgwSeparateLogin"];
             }
             set
             {
@@ -1269,12 +1433,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("tsgwUsername", DefaultValue = "")]
         public String TsgwUsername
         {
             get
             {
-                return (String)this["tsgwUsername"];
+                return (String) this["tsgwUsername"];
             }
             set
             {
@@ -1282,12 +1448,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("tsgwDomain", DefaultValue = "")]
         public String TsgwDomain
         {
             get
             {
-                return (String)this["tsgwDomain"];
+                return (String) this["tsgwDomain"];
             }
             set
             {
@@ -1295,12 +1463,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("tsgwPassword", DefaultValue = "")]
         public String TsgwEncryptedPassword
         {
             get
             {
-                return (String)this["tsgwPassword"];
+                return (String) this["tsgwPassword"];
             }
             set
             {
@@ -1308,12 +1478,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("url", DefaultValue = "https://github.com/Terminals-Origin/Terminals/issues")]
         public String Url
         {
             get
             {
-                return (String)this["url"];
+                return (String) this["url"];
             }
             set
             {
@@ -1321,12 +1493,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("notes")]
         public String Notes
         {
             get
             {
-                return TextConverter.DecodeFrom64((String)this["notes"]);
+                return TextConverter.DecodeFrom64((String) this["notes"]);
             }
             set
             {
@@ -1334,48 +1508,59 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("icaServerINI")]
         public String IcaServerINI
         {
             get
             {
-                return (String)this["icaServerINI"];
+                return (String) this["icaServerINI"];
             }
             set
             {
                 this["icaServerINI"] = value;
             }
         }
+
+        // ------------------------------------------------
+
         [ConfigurationProperty("icaClientINI")]
         public String IcaClientINI
         {
             get
             {
-                return (String)this["icaClientINI"];
+                return (String) this["icaClientINI"];
             }
             set
             {
                 this["icaClientINI"] = value;
             }
         }
+
+        // ------------------------------------------------
+
         [ConfigurationProperty("icaEnableEncryption")]
         public Boolean IcaEnableEncryption
         {
             get
             {
-                return (Boolean)this["icaEnableEncryption"];
+                return (Boolean) this["icaEnableEncryption"];
             }
             set
             {
                 this["icaEnableEncryption"] = value;
             }
         }
+
+        // ------------------------------------------------
+
         [ConfigurationProperty("icaEncryptionLevel")]
         public String IcaEncryptionLevel
         {
             get
             {
-                return (String)this["icaEncryptionLevel"];
+                return (String) this["icaEncryptionLevel"];
             }
             set
             {
@@ -1383,12 +1568,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("port", DefaultValue = DEFAULT_PORT)]
-        public Int32 Port
+        public int Port
         {
             get
             {
-                return (Int32)this["port"];
+                return (int) this["port"];
             }
             set
             {
@@ -1396,12 +1583,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("desktopShare")]
         public String DesktopShare
         {
             get
             {
-                return (String)this["desktopShare"];
+                return (String) this["desktopShare"];
             }
             set
             {
@@ -1409,12 +1598,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("executeBeforeConnect")]
         public Boolean ExecuteBeforeConnect
         {
             get
             {
-                return (Boolean)this["executeBeforeConnect"];
+                return (Boolean) this["executeBeforeConnect"];
             }
             set
             {
@@ -1422,12 +1613,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("executeBeforeConnectCommand")]
         public String ExecuteBeforeConnectCommand
         {
             get
             {
-                return (String)this["executeBeforeConnectCommand"];
+                return (String) this["executeBeforeConnectCommand"];
             }
             set
             {
@@ -1435,12 +1628,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("executeBeforeConnectArgs")]
         public String ExecuteBeforeConnectArgs
         {
             get
             {
-                return (String)this["executeBeforeConnectArgs"];
+                return (String) this["executeBeforeConnectArgs"];
             }
             set
             {
@@ -1448,12 +1643,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("executeBeforeConnectInitialDirectory")]
         public String ExecuteBeforeConnectInitialDirectory
         {
             get
             {
-                return (String)this["executeBeforeConnectInitialDirectory"];
+                return (String) this["executeBeforeConnectInitialDirectory"];
             }
             set
             {
@@ -1461,12 +1658,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("executeBeforeConnectWaitForExit")]
         public Boolean ExecuteBeforeConnectWaitForExit
         {
             get
             {
-                return (Boolean)this["executeBeforeConnectWaitForExit"];
+                return (Boolean) this["executeBeforeConnectWaitForExit"];
             }
             set
             {
@@ -1474,12 +1673,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("disableTheming")]
         public Boolean DisableTheming
         {
             get
             {
-                return (Boolean)this["disableTheming"];
+                return (Boolean) this["disableTheming"];
             }
             set
             {
@@ -1487,12 +1688,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("disableMenuAnimations")]
         public Boolean DisableMenuAnimations
         {
             get
             {
-                return (Boolean)this["disableMenuAnimations"];
+                return (Boolean) this["disableMenuAnimations"];
             }
             set
             {
@@ -1500,12 +1703,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("disableFullWindowDrag")]
         public Boolean DisableFullWindowDrag
         {
             get
             {
-                return (Boolean)this["disableFullWindowDrag"];
+                return (Boolean) this["disableFullWindowDrag"];
             }
             set
             {
@@ -1513,12 +1718,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("disableCursorBlinking")]
         public Boolean DisableCursorBlinking
         {
             get
             {
-                return (Boolean)this["disableCursorBlinking"];
+                return (Boolean) this["disableCursorBlinking"];
             }
             set
             {
@@ -1526,12 +1733,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("enableDesktopComposition")]
         public Boolean EnableDesktopComposition
         {
             get
             {
-                return (Boolean)this["enableDesktopComposition"];
+                return (Boolean) this["enableDesktopComposition"];
             }
             set
             {
@@ -1539,12 +1748,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("enableFontSmoothing")]
         public Boolean EnableFontSmoothing
         {
             get
             {
-                return (Boolean)this["enableFontSmoothing"];
+                return (Boolean) this["enableFontSmoothing"];
             }
             set
             {
@@ -1552,12 +1763,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("disableCursorShadow")]
         public Boolean DisableCursorShadow
         {
             get
             {
-                return (Boolean)this["disableCursorShadow"];
+                return (Boolean) this["disableCursorShadow"];
             }
             set
             {
@@ -1565,12 +1778,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("disableWallPaper")]
         public Boolean DisableWallPaper
         {
             get
             {
-                return (Boolean)this["disableWallPaper"];
+                return (Boolean) this["disableWallPaper"];
             }
             set
             {
@@ -1578,12 +1793,14 @@ namespace Terminals
             }
         }
 
+        // ------------------------------------------------
+
         [ConfigurationProperty("LoadBalanceInfo")]
         public string LoadBalanceInfo
         {
             get
             {
-                return (string)this["LoadBalanceInfo"];
+                return (string) this["LoadBalanceInfo"];
             }
             set
             {
@@ -1591,15 +1808,17 @@ namespace Terminals
             }
         }
 
+        /// -----------------------------------------------
         /// <summary>
-        /// Gets or sets comma delimeted names of groups
+        ///     Gets or sets comma delimeted names of groups
         /// </summary>
+
         [ConfigurationProperty("tags")]
         public String Tags
         {
             get
             {
-                return (String)this["tags"];
+                return (String) this["tags"];
             }
             set
             {
@@ -1607,18 +1826,20 @@ namespace Terminals
             }
         }
 
-        private const string DOMAIN_ELEMENT = "domainName";
-
+        /// -----------------------------------------------
         /// <summary>
-        /// Gets the stored domain name without checking for credentials resolution.
-        /// Use for direct upgrades.
+        ///     Gets the stored domain name without checking 
+        ///     for credentials resolution.
+        ///     
+        ///     Use for direct upgrades.
         /// </summary>
+
         [ConfigurationProperty(DOMAIN_ELEMENT, IsRequired = false)]
         public String DomainName
         {
             get
             {
-                return (String)this[DOMAIN_ELEMENT];
+                return (String) this[DOMAIN_ELEMENT];
             }
             set
             {
@@ -1626,24 +1847,37 @@ namespace Terminals
             }
         }
 
-        private const string USERNAME_ELEMENT = "userName";
-
+        /// -----------------------------------------------
         /// <summary>
         /// Gets the stored user name without checking for credentials resolution.
         /// Use for direct upgrades.
         /// </summary>
+
         [ConfigurationProperty(USERNAME_ELEMENT, IsRequired = false)]
         public String UserName
         {
             get
             {
-                return (String)this[USERNAME_ELEMENT];
+                return (String) this[USERNAME_ELEMENT];
             }
             set
             {
                 this[USERNAME_ELEMENT] = value;
             }
         }
-        #endregion
+
+        // ------------------------------------------------
+
+        public override string ToString()
+        {
+            string domain = string.Empty;
+
+            if(!string.IsNullOrEmpty(DomainName))
+            {
+                domain = DomainName + "\\";
+            }
+
+            return string.Format(@"Favorite:{0}({1})={2}{3}:{4}", Name, Protocol, domain, ServerName, Port);
+        }
     }
 }

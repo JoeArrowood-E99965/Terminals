@@ -1,26 +1,30 @@
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
+using System.Drawing;
 using System.Windows.Forms;
-using Terminals.Common.Connections;
+using System.Collections.Generic;
+
 using Terminals.Data;
+using Terminals.Common.Connections;
 using Terminals.Integration.Export;
 
 namespace Terminals.Connections
 {
     internal class ConnectionManager : IConnectionManager
     {
-        private readonly IConnectionPlugin dummyPlugin = new DummyPlugin();
+        private readonly IConnectionPlugin _dummyPlugin = new DummyPlugin();
 
-        private readonly Dictionary<string, IConnectionPlugin> plugins;
+        private readonly Dictionary<string, IConnectionPlugin> _plugins;
+
+        // ------------------------------------------------
 
         internal ConnectionManager(IPluginsLoader loader)
-        {
-            // RAS, // this protocol doesnt fit to the concept and seems to be broken 
+        {            
             IEnumerable<IConnectionPlugin> loaded = loader.Load();
-            this.plugins = SortExternalPlugins(loaded);
+            _plugins = SortExternalPlugins(loaded);
         }
+
+        // ------------------------------------------------
 
         private static Dictionary<string, IConnectionPlugin> SortExternalPlugins(IEnumerable<IConnectionPlugin> plugins)
         {
@@ -34,13 +38,21 @@ namespace Terminals.Connections
             return sortedPlugins;
         }
 
+        // ------------------------------------------------
+
         private static void SortPlugin(Dictionary<string, IConnectionPlugin> sortedPlugins, IConnectionPlugin loaded)
         {
-            if (sortedPlugins.ContainsKey(loaded.PortName))
+            if(sortedPlugins.ContainsKey(loaded.PortName))
+            {
                 LogDuplicitPlugin(loaded);
+            }
             else
+            {
                 sortedPlugins.Add(loaded.PortName, loaded);
+            }
         }
+
+        // ------------------------------------------------
 
         private static void LogDuplicitPlugin(IConnectionPlugin loaded)
         {
@@ -51,39 +63,52 @@ namespace Terminals.Connections
             Logging.Warn(message);
         }
 
+        // ------------------------------------------------
+
         internal Dictionary<string, Image> GetPluginIcons()
         {
-            return this.plugins.Values.ToDictionary(p => p.PortName, p => p.GetIcon());
+            return _plugins.Values.ToDictionary(p => p.PortName, p => p.GetIcon());
         }
 
+        // ------------------------------------------------
         /// <summary>
         ///     Explicit call of update properties container depending on selected protocol.
         ///     Don't call this in property setter, because of serializer.
         ///     Returns never null instance of the options, in case the protocol is identical, returns currentOptions.
         /// </summary>
-        
+
         internal ProtocolOptions UpdateProtocolPropertiesByProtocol(string newProtocol, ProtocolOptions currentOptions)
         {
             IConnectionPlugin plugin = FindPlugin(newProtocol);
             return SwitchPropertiesIfNotTheSameType(currentOptions, plugin);
         }
 
+        // ------------------------------------------------
+
         private static ProtocolOptions SwitchPropertiesIfNotTheSameType(ProtocolOptions currentOptions, IConnectionPlugin plugin)
         {
+            // ---------------------------
             // prevent to reset properties
-            if (currentOptions == null || currentOptions.GetType() != plugin.GetOptionsType()) 
+
+            if(currentOptions == null || currentOptions.GetType() != plugin.GetOptionsType())
+            {
                 return plugin.CreateOptions();
+            }
 
             return currentOptions;
         }
 
+        // ------------------------------------------------
+
         internal ushort[] SupportedPorts()
         {
-            return this.plugins.Values.Where(p => !this.IsProtocolWebBased(p.PortName))
+            return _plugins.Values.Where(p => !IsProtocolWebBased(p.PortName))
                 .Select(p => Convert.ToUInt16(p.Port))
                 .Distinct()
                 .ToArray();
         }
+
+        // ------------------------------------------------
 
         internal Connection CreateConnection(IFavorite favorite)
         {
@@ -91,60 +116,82 @@ namespace Terminals.Connections
             return plugin.CreateConnection();
         }
 
+        // ------------------------------------------------
+
         internal int GetPort(string name)
         {
             IConnectionPlugin plugin = FindPlugin(name);
             return plugin.Port;
         }
 
+        // ------------------------------------------------
         /// <summary>
-        /// Returns at least one pluging representing port.
+        ///     Returns at least one pluging representing port.
         /// </summary>
+
         public IEnumerable<IConnectionPlugin> GetPluginsByPort(int port)
         {
-            var resolvedPlugins = this.plugins.Values.Where(p => PluginIsOnPort(port, p))
+            var resolvedPlugins = _plugins.Values.Where(p => PluginIsOnPort(port, p))
                 .ToList();
 
-            if (resolvedPlugins.Count > 0)
+            if(resolvedPlugins.Count > 0)
+            {
                 return resolvedPlugins;
+            }
 
-            return new List<IConnectionPlugin>() { this.dummyPlugin};
+            return new List<IConnectionPlugin>() { _dummyPlugin};
         }
 
+        // ------------------------------------------------
         /// <summary>
-        /// Resolves first service from known plugins assigned to requested port.
-        /// Returns RDP as default service.
+        ///     Resolves first service from known plugins 
+        ///     assigned to requested port.
+        ///     Returns RDP as default service.
         /// </summary>
+
         internal string GetPortName(int port)
         {
+            // -------------------------------------------------
             // hack to let the VNC take precedence over the VMRC
-            var plugin = this.plugins.Values.OrderBy(p => p.PortName.Length)
+           
+            var plugin = _plugins.Values.OrderBy(p => p.PortName.Length)
                 .FirstOrDefault(p => PluginIsOnPort(port, p));
 
-            if (plugin != null)
+            if(plugin != null)
+            {
                 return plugin.PortName;
+            }
 
-            return this.dummyPlugin.PortName;
+            return _dummyPlugin.PortName;
         }
+
+        // ------------------------------------------------
 
         private static bool PluginIsOnPort(int port, IConnectionPlugin plugin)
         {
             return plugin.Port == port;
         }
 
+        // ------------------------------------------------
         /// <summary>
-        /// Ensures web based protocol shortcut. Returns true in case of HTTP or HTTPS.
+        ///     Ensures web based protocol shortcut. 
+        ///     Returns true in case of HTTP or HTTPS.
         /// </summary>
         /// <param name="protocol">One of connection short cuts.</param>
+
         internal bool IsProtocolWebBased(string protocol)
         {
             return protocol == KnownConnectionConstants.HTTP || protocol == KnownConnectionConstants.HTTPS;
         }
 
+        // ------------------------------------------------
+
         internal bool IsKnownProtocol(string protocol)
         {
-            return this.plugins.Any(p => p.Key == protocol);
+            return _plugins.Any(p => p.Key == protocol);
         }
+
+        // ------------------------------------------------
 
         internal Control[] CreateControls(string newProtocol)
         {
@@ -152,38 +199,51 @@ namespace Terminals.Connections
             return plugin.CreateOptionsControls();
         }
 
+        // ------------------------------------------------
+
         private IConnectionPlugin FindPlugin(string protocolName)
         {
             IConnectionPlugin plugin;
-            if (this.plugins.TryGetValue(protocolName, out plugin))
-                return plugin;
 
-            return this.dummyPlugin;
+            if(_plugins.TryGetValue(protocolName, out plugin))
+            {
+                return plugin;
+            }
+
+            return _dummyPlugin;
         }
+
+        // ------------------------------------------------
 
         public string[] GetAvailableProtocols()
         {
-            return this.plugins.Values.Select(p => p.PortName)
+            return _plugins.Values.Select(p => p.PortName)
                 .ToArray();
         }
 
+        // ------------------------------------------------
+
         internal ITerminalsOptionsExport[] GetTerminalsOptionsExporters()
         {
-            return this.plugins.Values.OfType<IOptionsExporterFactory>()
+            return _plugins.Values.OfType<IOptionsExporterFactory>()
                 .Select(p => p.CreateOptionsExporter())
                 .ToArray();
         }
 
+        // ------------------------------------------------
+
         public IToolbarExtender[] CreateToolbarExtensions(ICurrenctConnectionProvider provider)
         {
-            return this.plugins.Values.OfType<IToolbarExtenderFactory>()
+            return _plugins.Values.OfType<IToolbarExtenderFactory>()
                 .Select(p => p.CreateToolbarExtender(provider))
                 .ToArray();
         }
 
+        // ------------------------------------------------
+
         public Type[] GetAllKnownProtocolOptionTypes()
         {
-            List<Type> knownTypes = this.plugins.Values
+            List<Type> knownTypes = _plugins.Values
                 .Select(p => p.GetOptionsType())
                 .ToList();
 
@@ -192,35 +252,48 @@ namespace Terminals.Connections
                 .ToArray();
         }
 
+        // ------------------------------------------------
+
         public IOptionsConverterFactory GetOptionsConverterFactory(string protocolName)
         {
-            var protocolPlugin = this.FindPlugin(protocolName) as IOptionsConverterFactory;
-            if (protocolPlugin == null)
-                protocolPlugin = this.dummyPlugin as IOptionsConverterFactory;
+            var protocolPlugin = FindPlugin(protocolName) as IOptionsConverterFactory;
+
+            if(protocolPlugin == null)
+            {
+                protocolPlugin = _dummyPlugin as IOptionsConverterFactory;
+            }
 
             return protocolPlugin;
         }
 
+        // ------------------------------------------------
+
         internal void SetDefaultProtocol(IFavorite favorite)
         {
             string defaultProtocol = KnownConnectionConstants.RDP;
-            var available = this.GetAvailableProtocols();
+            var available = GetAvailableProtocols();
 
-            if (!available.Contains(defaultProtocol))
+            if(!available.Contains(defaultProtocol))
+            {
                 defaultProtocol = available.First();
+            }
 
-            this.ChangeProtocol(favorite, defaultProtocol);
+            ChangeProtocol(favorite, defaultProtocol);
         }
+
+        // ------------------------------------------------
 
         public void ChangeProtocol(IFavorite favorite, string protocol)
         {
-            ProtocolOptions options = this.UpdateProtocolPropertiesByProtocol(protocol, favorite.ProtocolProperties);
+            ProtocolOptions options = UpdateProtocolPropertiesByProtocol(protocol, favorite.ProtocolProperties);
             favorite.ChangeProtocol(protocol, options);
         }
 
+        // ------------------------------------------------
+
         public override string ToString()
         {
-            string[] loadedProtocols = this.GetAvailableProtocols();
+            string[] loadedProtocols = GetAvailableProtocols();
             string pluginsLabel = string.Join(",", loadedProtocols);
             return string.Format("ConnectionManager:{0}", pluginsLabel);
         }
