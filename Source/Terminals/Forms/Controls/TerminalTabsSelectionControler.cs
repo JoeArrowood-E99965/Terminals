@@ -10,60 +10,66 @@ using Terminals.Forms;
 
 namespace Terminals
 {
+    /// ---------------------------------------------------
     /// <summary>
-    /// Adapter between all windows (including main window) and TabControl
+    ///     Adapter between all windows (including main window) 
+    ///     and TabControl
     /// </summary>
+    
     internal class TerminalTabsSelectionControler : ICurrenctConnectionProvider
     {
-        private readonly Settings settings = Settings.Instance;
-        private readonly List<PopupTerminal> detachedWindows = new List<PopupTerminal>();
-        private readonly TabControl.TabControl mainTabControl;
-        private ConnectionsUiFactory connectionsUiFactory;
+        private readonly Settings _settings = Settings.Instance;
+        private readonly List<PopupTerminal> _detachedWindows = new List<PopupTerminal>();
+        private readonly TabControl.TabControl _mainTabControl;
+        private ConnectionsUiFactory _connectionsUiFactory;
 
-        private readonly TabControlFilter filter;
+        private readonly TabControlFilter _filter;
 
         public IConnection CurrentConnection
         {
-            get { return this.filter.SelectedConnection; }
+            get { return _filter.SelectedConnection; }
         }
 
         internal TerminalTabControlItem Selected
         {
-            get { return this.filter.Selected; }
+            get { return _filter.Selected; }
         }
 
         internal IFavorite SelectedOriginFavorite
         {
-            get { return this.filter.SelectedOriginFavorite; }
+            get { return _filter.SelectedOriginFavorite; }
         }
 
         internal IFavorite SelectedFavorite
         {
-            get { return this.filter.SelectedFavorite; }
+            get { return _filter.SelectedFavorite; }
         }
 
         internal bool HasSelected
         {
-            get { return this.filter.HasSelected; }
+            get { return _filter.HasSelected; }
         }
 
         internal TerminalTabsSelectionControler(TabControl.TabControl tabControl, IPersistence persistence)
         {
-            this.mainTabControl = tabControl;
-            this.filter = new TabControlFilter(tabControl);
-            persistence.Dispatcher.FavoritesChanged += new FavoritesChangedEventHandler(this.OnFavoritesChanged);
+            _mainTabControl = tabControl;
+            _filter = new TabControlFilter(tabControl);
+            persistence.Dispatcher.FavoritesChanged += new FavoritesChangedEventHandler(OnFavoritesChanged);
         }
 
         internal void AssingUiFactory(ConnectionsUiFactory connectionsUiFactory)
         {
-            this.connectionsUiFactory = connectionsUiFactory;
+            _connectionsUiFactory = connectionsUiFactory;
         }
 
         private void OnFavoritesChanged(FavoritesChangedEventArgs args)
         {
             foreach (IFavorite updated in args.Updated)
             {
-                // dont update the rest of properties, because it doesnt reflect opened session
+                // -----------------------------------
+                // dont update the rest of properties,
+                // because it doesnt reflect opened session
+
                 UpdateDetachedWindowTitle(updated);
                 UpdateAttachedTabTitle(updated);
             }
@@ -71,21 +77,21 @@ namespace Terminals
 
         private void UpdateAttachedTabTitle(IFavorite updated)
         {
-            TabControlItem attachedTab = this.filter.FindAttachedTab(updated);
+            TabControlItem attachedTab = _filter.FindAttachedTab(updated);
             if (attachedTab != null)
                 attachedTab.Title = updated.Name;
         }
 
         private void UpdateDetachedWindowTitle(IFavorite updated)
         {
-            PopupTerminal detached = this.FindDetachedWindowByFavorite(updated);
+            PopupTerminal detached = FindDetachedWindowByFavorite(updated);
             if (detached != null)
                 detached.UpdateTitle();
         }
 
         private PopupTerminal FindDetachedWindowByFavorite(IFavorite updated)
         {
-            return this.detachedWindows.FirstOrDefault(window => window.HasFavorite(updated));
+            return _detachedWindows.FirstOrDefault(window => window.HasFavorite(updated));
         }
 
         /// <summary>
@@ -95,7 +101,7 @@ namespace Terminals
         /// <param name="toSelect">new terminal tabControl to assign as selected</param>
         internal void Select(TerminalTabControlItem toSelect)
         {
-            this.mainTabControl.SelectedItem = toSelect;
+            _mainTabControl.SelectedItem = toSelect;
         }
 
         /// <summary>
@@ -109,14 +115,14 @@ namespace Terminals
 
         internal void AddAndSelect(TerminalTabControlItem toAdd)
         {
-            this.mainTabControl.Items.Add(toAdd);
-            this.Select(toAdd);
+            _mainTabControl.Items.Add(toAdd);
+            Select(toAdd);
         }
 
         internal void RemoveAndUnSelect(TerminalTabControlItem toRemove)
         {
-            this.mainTabControl.Items.Remove(toRemove);
-            this.UnSelect();
+            _mainTabControl.Items.Remove(toRemove);
+            UnSelect();
         }
 
         /// <summary>
@@ -124,30 +130,31 @@ namespace Terminals
         /// </summary>
         internal void DetachTabToNewWindow()
         {
-            if (this.Selected != null)
-                this.DetachTabToNewWindow(this.Selected);
+            if (Selected != null)
+                DetachTabToNewWindow(Selected);
         }
 
         internal void DetachTabToNewWindow(TerminalTabControlItem tabControlToOpen)
         {
             if (tabControlToOpen != null)
             {
-                this.mainTabControl.Items.SuspendEvents();
+                _mainTabControl.Items.SuspendEvents();
 
                 PopupTerminal pop = new PopupTerminal(this);
-                mainTabControl.RemoveTab(tabControlToOpen);
+                _mainTabControl.RemoveTab(tabControlToOpen);
                 pop.AddTerminal(tabControlToOpen);
 
-                this.mainTabControl.Items.ResumeEvents();
-                this.detachedWindows.Add(pop);
+                _mainTabControl.Items.ResumeEvents();
+                _detachedWindows.Add(pop);
                 pop.Show();
             }
         }
 
         internal void AttachTabFromWindow(TerminalTabControlItem tabControlToAttach)
         {
-            this.mainTabControl.AddTab(tabControlToAttach);
+            _mainTabControl.AddTab(tabControlToAttach);
             PopupTerminal popupTerminal = tabControlToAttach.FindForm() as PopupTerminal;
+
             if (popupTerminal != null)
             {
                 UnRegisterPopUp(popupTerminal);
@@ -156,37 +163,42 @@ namespace Terminals
 
         internal void UnRegisterPopUp(PopupTerminal popupTerminal)
         {
-            if (this.detachedWindows.Contains(popupTerminal))
+            if (_detachedWindows.Contains(popupTerminal))
             {
-                this.detachedWindows.Remove(popupTerminal);
+                _detachedWindows.Remove(popupTerminal);
             }
         }
 
         internal void CaptureScreen()
         {
-            this.CaptureScreen(this.mainTabControl);
+            CaptureScreen(_mainTabControl);
         }
 
+        /// -----------------------------------------------
         /// <summary>
-        /// We need to provide the tab from outside, because it may be tab from PopUp window
+        ///     We need to provide the tab from outside, 
+        ///     because it may be tab from PopUp window
         /// </summary>
+        
         internal void CaptureScreen(TabControl.TabControl tabControl)
         {
-            CaptureManager.CaptureManager.PerformScreenCapture(tabControl, this.SelectedOriginFavorite);
-            this.RefreshCaptureManagerAndCreateItsTab(false);
+            CaptureManager.CaptureManager.PerformScreenCapture(tabControl, SelectedOriginFavorite);
+            RefreshCaptureManagerAndCreateItsTab(false);
         }
 
         internal void FocusCaptureManager()
         {
-            this.RefreshCaptureManagerAndCreateItsTab(true);
+            RefreshCaptureManagerAndCreateItsTab(true);
         }
 
         private void RefreshCaptureManagerAndCreateItsTab(bool openManagerTab)
         {
-            Boolean refreshed = this.RefreshCaptureManager(openManagerTab);
+            Boolean refreshed = RefreshCaptureManager(openManagerTab);
 
-            if (!refreshed && this.NeedsFocusCaptureManagerTab(openManagerTab))
-                this.connectionsUiFactory.CreateCaptureManagerTab();
+            if(!refreshed && NeedsFocusCaptureManagerTab(openManagerTab))
+            {
+                _connectionsUiFactory.CreateCaptureManagerTab();
+            }
         }
 
         /// <summary>
@@ -194,14 +206,15 @@ namespace Terminals
         /// </summary>
         /// <param name="openManagerTab"></param>
         /// <returns>true, Tab exists and was updated, otherwise false.</returns>
+        
         private bool RefreshCaptureManager(bool openManagerTab)
         {
-            CaptureManagerLayout captureManager = this.FindCaptureManagerControl();
+            CaptureManagerLayout captureManager = FindCaptureManagerControl();
 
             if (captureManager != null)
             {
                 captureManager.RefreshView();
-                this.FocusCaptureManager(captureManager, openManagerTab);
+                FocusCaptureManager(captureManager, openManagerTab);
                 return true;
             }
 
@@ -210,27 +223,33 @@ namespace Terminals
 
         private void FocusCaptureManager(CaptureManagerLayout connectionManager, bool openManagerTab)
         {
-            if (this.NeedsFocusCaptureManagerTab(openManagerTab))
+            if (NeedsFocusCaptureManagerTab(openManagerTab))
             {
                 connectionManager.BringToFront();
                 connectionManager.Update();
+                
+                // ---------------------------------------------------------
                 // the connection manager was resolved as control on the tab
+
                 var tab = connectionManager.Parent as TerminalTabControlItem;
-                this.Select(tab);
+                Select(tab);
             }
         }
 
         private bool NeedsFocusCaptureManagerTab(bool openManagerTab)
         {
-            return openManagerTab || (this.settings.EnableCaptureToFolder && this.settings.AutoSwitchOnCapture);
+            return openManagerTab || (_settings.EnableCaptureToFolder && _settings.AutoSwitchOnCapture);
         }
 
         private CaptureManagerLayout FindCaptureManagerControl()
         {
-            TerminalTabControlItem tab = this.filter.FindCaptureManagerTab();
+            TerminalTabControlItem tab = _filter.FindCaptureManagerTab();
+
             if (tab != null)
             {
+                // ---------------------------------------------------------
                 // after the connection is removed, this index moves to zero
+
                 return tab.Controls[CaptureManagerLayout.ControlName] as CaptureManagerLayout;
             }
 
@@ -239,8 +258,9 @@ namespace Terminals
 
         internal void UpdateCaptureButtonOnDetachedPopUps()
         {
-            bool newEnable = settings.EnabledCaptureToFolderAndClipBoard;
-            foreach (PopupTerminal detachedWindow in this.detachedWindows)
+            bool newEnable = _settings.EnabledCaptureToFolderAndClipBoard;
+
+            foreach (PopupTerminal detachedWindow in _detachedWindows)
             {
                 detachedWindow.UpdateCaptureButtonEnabled(newEnable);
             }

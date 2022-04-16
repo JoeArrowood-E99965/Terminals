@@ -1,23 +1,26 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
+using System.Drawing;
 using System.Windows.Forms;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+
 using TabControl;
+
 using Terminals.Data;
 using Terminals.Forms;
-using Terminals.Forms.Controls;
-using Terminals.Forms.Rendering;
-using Terminals.CommandLine;
-using Terminals.Configuration;
+using Terminals.Native;
+using Terminals.Updates;
+using Terminals.Services;
 using Terminals.Connections;
 using Terminals.Credentials;
-using Terminals.Native;
-using Terminals.Services;
-using Terminals.Updates;
+using Terminals.CommandLine;
+using Terminals.Configuration;
+using Terminals.Forms.Controls;
+using Terminals.Forms.Rendering;
+
 using Settings = Terminals.Configuration.Settings;
 
 namespace Terminals
@@ -31,28 +34,27 @@ namespace Terminals
         private const String FULLSCREEN_ERROR_MSG = "Screen properties not available for RDP";
 
         private FavsList _favsList1;
-
-        private readonly FormSettings _formSettings;
-        private TabControlItem _currentToolTipItem;
-        private ToolTip _currentToolTip;
         private Boolean _allScreens;
-        private readonly TerminalTabsSelectionControler _terminalsControler;
+        private ToolTip _currentToolTip;
+        private TabControlItem _currentToolTipItem;
+        private readonly FormSettings _formSettings;
         private readonly FavoritesMenuLoader _menuLoader;
+        private readonly TerminalTabsSelectionControler _terminalsControler;
         private readonly MainFormFullScreenSwitch _fullScreenSwitch;
 
-        private readonly ConnectionsUiFactory _connectionsUiFactory;
-
-        private readonly TabControlRemover _tabControlRemover;
+        private FavoriteIcons _favoriteIcons;
 
         private readonly TabControlFilter _tabsFilter;
 
-        private readonly IToolbarExtender[] _toolbarExtenders;
-
         private readonly ToolTipBuilder _toolTipBuilder;
+
+        private readonly TabControlRemover _tabControlRemover;
+
+        private readonly IToolbarExtender[] _toolbarExtenders;
 
         private readonly ConnectionManager _connectionManager;
 
-        private FavoriteIcons _favoriteIcons;
+        private readonly ConnectionsUiFactory _connectionsUiFactory;
 
         /// -----------------------------------------------
 
@@ -129,7 +131,10 @@ namespace Terminals
                 _toolTipBuilder = new ToolTipBuilder(_persistence.Security);
                 _settings.StartDelayedUpdate();
 
-                // Set default font type by Windows theme to use for all controls on form
+                // --------------------------------------
+                // Set default font type by Windows theme
+                // to use for all controls on form
+
                 Font = SystemFonts.IconTitleFont;
 
                 InitializeComponent(); // main designer procedure
@@ -137,16 +142,20 @@ namespace Terminals
                 _formSettings = new FormSettings(this);
                 _tabsFilter = new TabControlFilter(tcTerminals);
                 _terminalsControler = new TerminalTabsSelectionControler(tcTerminals, _persistence);
-                _connectionsUiFactory = new ConnectionsUiFactory(this, _terminalsControler,
-                    _persistence, _connectionManager, _favoriteIcons);
+                _connectionsUiFactory = new ConnectionsUiFactory(this, _terminalsControler, _persistence, _connectionManager, _favoriteIcons);
                 _terminalsControler.AssingUiFactory(_connectionsUiFactory);
                 _toolbarExtenders = _connectionManager.CreateToolbarExtensions(_terminalsControler);
 
+                // --------------------------------------------------
                 // Initialize FavsList outside of InitializeComponent
-                // Inside InitializeComponent it sometimes caused the design view in VS to return errors
+                // Inside InitializeComponent it sometimes caused the
+                // design view in VS to return errors
+
                 InitializeFavsListControl();
 
+                // -------------------------------------------
                 // Set notifyicon icon from embedded png image
+
                 MainWindowNotifyIcon.Icon = Icon.FromHandle(Properties.Resources.terminalsicon.GetHicon());
                 _menuLoader = new FavoritesMenuLoader(this, _persistence);
                 favoriteToolBar.Visible = toolStripMenuItemShowHideFavoriteToolbar.Checked;
@@ -181,15 +190,18 @@ namespace Terminals
 
         private void InitializeFavsListControl()
         {
-            _favsList1 = new FavsList();
+            _favsList1 = new FavsList()
+            {
+                TabIndex = 2,
+                Name = "favsList1",
+                Dock = DockStyle.Fill,
+                Size = new Size(200, 497),
+                Location = new Point(5, 0),
+                Padding = new Padding(4, 4, 4, 4),
+                ConnectionsUiFactory = _connectionsUiFactory,
+            };
+
             pnlTagsFavorites.Controls.Add(_favsList1);
-            _favsList1.Dock = DockStyle.Fill;
-            _favsList1.Location = new Point(5, 0);
-            _favsList1.Padding = new Padding(4, 4, 4, 4);
-            _favsList1.Name = "favsList1";
-            _favsList1.Size = new Size(200, 497);
-            _favsList1.TabIndex = 2;
-            _favsList1.ConnectionsUiFactory = _connectionsUiFactory;
         }
 
         /// -----------------------------------------------
@@ -197,8 +209,11 @@ namespace Terminals
         private void ApplyControlsEnableAndVisibleState()
         {
             MainWindowNotifyIcon.Visible = _settings.MinimizeToTray;
+
             if(!_settings.MinimizeToTray && !Visible)
+            {
                 Visible = true;
+            }
 
             lockToolbarsToolStripMenuItem.Checked = _settings.ToolbarsLocked;
             MainMenuStrip.GripStyle = _settings.ToolbarsLocked ? ToolStripGripStyle.Hidden : ToolStripGripStyle.Visible;
@@ -209,7 +224,9 @@ namespace Terminals
             // TODO this should update all favorites
 
             if(selectedFavorite != null)
+            {
                 _terminalsControler.Selected.ToolTipText = _toolTipBuilder.BuildTooTip(selectedFavorite);
+            }
 
             groupsToolStripMenuItem.Visible = _settings.EnableGroupsMenu;
             tsbTags.Checked = _settings.ShowFavoritePanel;
@@ -225,13 +242,20 @@ namespace Terminals
         private void ApplyTheme()
         {
             if(_settings.Office2007BlueFeel)
+            {
                 ToolStripManager.Renderer = Office2007Renderer.GetRenderer(RenderColors.Blue);
+            }
             else if(_settings.Office2007BlackFeel)
+            {
                 ToolStripManager.Renderer = Office2007Renderer.GetRenderer(RenderColors.Black);
+            }
             else
+            {
                 ToolStripManager.Renderer = new ToolStripProfessionalRenderer();
+            }
 
             // Update the old treeview theme to the new theme from Win Vista and up
+
             Methods.SetWindowTheme(menuStrip.Handle, "Explorer", null);
         }
 
@@ -311,7 +335,10 @@ namespace Terminals
 
         public String GetDesktopShare()
         {
-            // it is safe to ask for favorite here, is only called from connection supporting this feature
+            // ------------------------------------
+            // it is safe to ask for favorite here,
+            // is only called from connection supporting this feature
+
             String currentDesktopShare = _terminalsControler.SelectedFavorite.DesktopShare;
             var desktopShares = new DesktopShares(CurrentTerminal, _settings.DefaultDesktopShare);
             return desktopShares.EvaluateDesktopShare(currentDesktopShare);
@@ -324,8 +351,11 @@ namespace Terminals
             if(!Visible)
             {
                 Show();
+
                 if(WindowState == FormWindowState.Minimized)
+                {
                     Methods.ShowWindow(new HandleRef(this, Handle), 9);
+                }
 
                 Methods.SetForegroundWindow(new HandleRef(this, Handle));
             }
@@ -336,6 +366,7 @@ namespace Terminals
         private void ToggleGrabInput()
         {
             var currentConnection = _terminalsControler.CurrentConnection as IHandleKeyboardInput;
+
             if(currentConnection != null)
             {
                 currentConnection.GrabInput = !currentConnection.GrabInput;
@@ -351,8 +382,11 @@ namespace Terminals
             {
                 showInDualScreensToolStripMenuItem.Enabled = true;
 
-                //Lazy check to see if we are using dual screens
+                // ----------------------------------------------
+                // Lazy check to see if we are using dual screens
+
                 int w = Width / Screen.PrimaryScreen.Bounds.Width;
+
                 if(w > 2)
                 {
                     _allScreens = true;
@@ -407,7 +441,9 @@ namespace Terminals
         private void ShowCredentialsManager()
         {
             using(var mgr = new CredentialManager(_persistence))
+            {
                 mgr.ShowDialog();
+            }
         }
 
         /// -----------------------------------------------
@@ -436,6 +472,7 @@ namespace Terminals
                 else
                 {
                     // noticed performance issue when set to 6 and Terminals.config file is empty
+
                     splitContainer1.Panel1MinSize = 9;
                     splitContainer1.SplitterDistance = 9;
                     splitContainer1.IsSplitterFixed = true;
@@ -448,7 +485,8 @@ namespace Terminals
             }
             else
             {
-                //just hide it completely
+                // just hide it completely
+
                 splitContainer1.Panel1Collapsed = true;
                 splitContainer1.Panel1MinSize = 0;
                 splitContainer1.SplitterDistance = 0;
@@ -476,11 +514,16 @@ namespace Terminals
         {
             Boolean connectToConsole = commandLineArgs.console;
             FullScreen = commandLineArgs.fullscreen;
+
             if(commandLineArgs.HasUrlDefined)
+            {
                 QuickConnect(commandLineArgs.UrlServer, commandLineArgs.UrlPort, connectToConsole);
+            }
 
             if(commandLineArgs.HasMachineDefined)
+            {
                 QuickConnect(commandLineArgs.MachineName, commandLineArgs.Port, connectToConsole);
+            }
 
             ConnectToFavorites(commandLineArgs, connectToConsole);
         }
@@ -500,6 +543,7 @@ namespace Terminals
         private void SaveActiveConnections()
         {
             var activeConnections = new List<string>();
+
             foreach(TabControlItem item in tcTerminals.Items)
             {
                 activeConnections.Add(item.Title);
@@ -522,8 +566,11 @@ namespace Terminals
         private void CheckForNewRelease(Task<ReleaseInfo> downloadTask)
         {
             ReleaseInfo downloaded = downloadTask.Result;
+
             if(downloaded.NewAvailable && !_settings.NeverShowTerminalsWindow)
+            {
                 ExternalLinks.AskIfShowReleasePage(_settings, downloaded);
+            }
 
             UpdateReleaseToolStripItem(downloaded);
         }
@@ -541,7 +588,9 @@ namespace Terminals
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
-            // Get initial window state, location and after the form has finished loading
+            // Get initial window state, location and
+            // after the form has finished loading
+
             SetWindowState();
         }
 
@@ -549,13 +598,12 @@ namespace Terminals
 
         private void MainForm_KeyUp(object sender, KeyEventArgs e)
         {
-            if((tsbGrabInput.Checked || FullScreen) && e.KeyCode != Keys.Cancel)
+            if((tsbGrabInput.Checked || FullScreen) &&
+                e.KeyCode != Keys.Cancel &&
+                CurrentTerminal != null)
             {
-                if(CurrentTerminal != null)
-                {
-                    CurrentTerminal.Focus();
-                    return;
-                }
+                CurrentTerminal.Focus();
+                return;
             }
 
             if(e.KeyCode == Keys.Cancel)
@@ -569,7 +617,9 @@ namespace Terminals
             else if(e.KeyCode == Keys.F4)
             {
                 if(!tscConnectTo.Focused)
+                {
                     tscConnectTo.Focus();
+                }
             }
             else if(e.KeyCode == Keys.F3)
             {
@@ -584,7 +634,9 @@ namespace Terminals
             using(var qc = new QuickConnect(_persistence))
             {
                 if(qc.ShowDialog(this) == DialogResult.OK && !string.IsNullOrEmpty(qc.ConnectionName))
+                {
                     _connectionsUiFactory.ConnectByFavoriteNames(new List<string>() { qc.ConnectionName });
+                }
             }
         }
 
@@ -595,7 +647,9 @@ namespace Terminals
             _formSettings.EnsureVisibleScreenArea();
 
             if(FullScreen)
+            {
                 tcTerminals.ShowTabs = false;
+            }
         }
 
         /// -----------------------------------------------
@@ -605,14 +659,18 @@ namespace Terminals
             _favsList1.SaveState();
 
             if(FullScreen)
+            {
                 FullScreen = false;
+            }
 
             MainWindowNotifyIcon.Visible = false;
             CloseOpenedConnections(e);
             toolStripContainer.SaveLayout();
 
             if(!e.Cancel)
+            {
                 SingleInstanceApplication.Instance.Close();
+            }
         }
 
         /// -----------------------------------------------
@@ -622,10 +680,14 @@ namespace Terminals
             if(_terminalsControler.HasSelected)
             {
                 if(_settings.ShowConfirmDialog)
+                {
                     SaveConnectonsIfRequested(args);
+                }
 
                 if(_settings.SaveConnectionsOnClose)
+                {
                     SaveActiveConnections();
+                }
             }
         }
 
@@ -634,14 +696,20 @@ namespace Terminals
         private void SaveConnectonsIfRequested(FormClosingEventArgs args)
         {
             var frmSaveActiveConnections = new SaveActiveConnectionsForm();
+
             if(frmSaveActiveConnections.ShowDialog() == DialogResult.OK)
             {
                 _settings.ShowConfirmDialog = frmSaveActiveConnections.PromptNextTime;
+
                 if(frmSaveActiveConnections.OpenConnectionsNextTime)
+                {
                     SaveActiveConnections();
+                }
             }
             else
+            {
                 args.Cancel = true;
+            }
         }
 
         /// -----------------------------------------------
@@ -651,7 +719,9 @@ namespace Terminals
             if(WindowState == FormWindowState.Minimized)
             {
                 if(_settings.MinimizeToTray)
+                {
                     Visible = false;
+                }
             }
             else
             {
@@ -664,7 +734,9 @@ namespace Terminals
         private void MainForm_Move(object sender, EventArgs e)
         {
             if(!_fullScreenSwitch.SwitchingFullScreen && WindowState == FormWindowState.Normal)
+            {
                 _fullScreenSwitch.LastWindowStateNormalLocation = Location;
+            }
         }
 
         /// -----------------------------------------------
@@ -677,12 +749,18 @@ namespace Terminals
         {
             // In a higher DPI mode, the form resize event is called before
             // the fullScreenSwitch class is initialized.
+
             if(_fullScreenSwitch == null)
+            {
                 return;
+            }
 
             // Save window state only when not switching to and from fullscreen mode
+
             if(_fullScreenSwitch.SwitchingFullScreen)
+            {
                 return;
+            }
 
             _fullScreenSwitch.LastWindowState = WindowState;
 
@@ -705,10 +783,9 @@ namespace Terminals
 
         private void TcTerminals_MouseClick(object sender, MouseEventArgs e)
         {
-            if(e.Button == MouseButtons.Right)
+            if(e.Button == MouseButtons.Right && tcTerminals != null && sender != null)
             {
-                if(tcTerminals != null && sender != null)
-                    QuickContextMenu.Show(tcTerminals, e.Location);
+                QuickContextMenu.Show(tcTerminals, e.Location);
             }
         }
 
@@ -725,48 +802,59 @@ namespace Terminals
         private void QuickContextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             ToolStripItem clickedItem = e.ClickedItem;
+
             if(clickedItem.Text == Program.Resources.GetString("Restore") ||
-                clickedItem.Name == FavoritesMenuLoader.COMMAND_RESTORESCREEN ||
-                clickedItem.Name == FavoritesMenuLoader.COMMAND_FULLSCREEN)
+               clickedItem.Name == FavoritesMenuLoader.COMMAND_RESTORESCREEN ||
+               clickedItem.Name == FavoritesMenuLoader.COMMAND_FULLSCREEN)
             {
                 FullScreen = !FullScreen;
             }
-            else switch(clickedItem.Name)
+            else
+            {
+                switch(clickedItem.Name)
                 {
                     case FavoritesMenuLoader.COMMAND_CREDENTIALMANAGER:
                         ShowCredentialsManager();
                         break;
+
                     case FavoritesMenuLoader.COMMAND_ORGANIZEFAVORITES:
                         ManageConnectionsToolStripMenuItem_Click(null, null);
                         break;
+
                     case FavoritesMenuLoader.COMMAND_OPTIONS:
                         OptionsToolStripMenuItem_Click(null, null);
                         break;
+
                     case FavoritesMenuLoader.COMMAND_NETTOOLS:
                         ToolStripButton2_Click(null, null);
                         break;
+
                     case FavoritesMenuLoader.COMMAND_CAPTUREMANAGER:
                         _terminalsControler.FocusCaptureManager();
                         break;
+
                     case FavoritesMenuLoader.COMMAND_EXIT:
                         Close();
                         break;
+
                     case FavoritesMenuLoader.QUICK_CONNECT:
                         ShowQuickConnect();
                         break;
+
                     case FavoritesMenuLoader.COMMAND_SHOWMENU:
-                        {
-                            Boolean visible = !menuStrip.Visible;
-                            menuStrip.Visible = visible;
-                            menubarToolStripMenuItem.Checked = visible;
-                        }
+                        var visible = !menuStrip.Visible;
+                        menuStrip.Visible = visible;
+                        menubarToolStripMenuItem.Checked = visible;
                         break;
+
                     case FavoritesMenuLoader.COMMAND_SPECIAL:
                         return;
+
                     default:
                         OnFavoriteTrayToolsStripClick(e);
                         break;
                 }
+            }
 
             QuickContextMenu.Hide();
         }
@@ -780,8 +868,11 @@ namespace Terminals
             if(tag != null)
             {
                 String itemName = e.ClickedItem.Text;
+
                 if(tag == FavoritesMenuLoader.FAVORITE)
+                {
                     _connectionsUiFactory.ConnectByFavoriteNames(new List<string>() { itemName });
+                }
             }
         }
 
@@ -796,8 +887,9 @@ namespace Terminals
 
         private void GroupAddToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //TODO Bug: doenst work, the menu doesnt refresh and the favorite isnt put into the group
-            IGroup selectedGroup = ((GroupMenuItem)sender).Group;
+            // TODO Bug: doenst work, the menu doesnt refresh and the favorite isnt put into the group
+
+            IGroup selectedGroup = ((GroupMenuItem) sender).Group;
             IFavorite selectedFavorite = _terminalsControler.SelectedOriginFavorite;
 
             if(selectedGroup != null && selectedFavorite != null)
@@ -810,7 +902,8 @@ namespace Terminals
 
         private void GroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var groupMenuItem = (GroupMenuItem)sender;
+            var groupMenuItem = (GroupMenuItem) sender;
+
             foreach(IFavorite favorite in groupMenuItem.Favorites)
             {
                 _connectionsUiFactory.Connect(favorite);
@@ -821,8 +914,8 @@ namespace Terminals
 
         private void ServerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string connectionName = ((ToolStripItem)sender).Text;
-            IFavorite favorite = PersistedFavorites[connectionName];
+            var connectionName = ((ToolStripItem) sender).Text;
+            var favorite = PersistedFavorites[connectionName];
             _connectionsUiFactory.Connect(favorite);
         }
 
@@ -831,18 +924,21 @@ namespace Terminals
         private void terminalTabPage_Resize(object sender, EventArgs e)
         {
             var terminalTabControlItem = sender as TerminalTabControlItem;
+
             if(terminalTabControlItem != null)
             {
                 // TODO Fix the smart sizing issue added on 7/27/2011
+
                 //var rdpConnection = terminalTabControlItem.Connection as RDPConnection;
-                //if (rdpConnection != null &&
+
+                //if(rdpConnection != null &&
                 //    !rdpConnection.AxMsRdpClient.AdvancedSettings3.SmartSizing)
                 //{
                 //    //rdpConnection.AxMsRdpClient.DesktopWidth = terminalTabControlItem.Width;
                 //    //rdpConnection.AxMsRdpClient.DesktopHeight = terminalTabControlItem.Height;
                 //    //Debug.WriteLine("Tab size:" + terminalTabControlItem.Size.ToString() + ";" +
-                //    //  rdpConnection.AxMsRdpClient.DesktopHeight.ToString() + "," +
-                //    //  rdpConnection.AxMsRdpClient.DesktopWidth.ToString());
+                //    //                rdpConnection.AxMsRdpClient.DesktopHeight.ToString() + "," +
+                //    //                rdpConnection.AxMsRdpClient.DesktopWidth.ToString());
                 //}
             }
         }
@@ -895,8 +991,7 @@ namespace Terminals
         {
             using(var usrForm = new ConnectExtraForm(_persistence))
             {
-                if(usrForm.ShowDialog() != DialogResult.OK)
-                    return;
+                if(usrForm.ShowDialog() != DialogResult.OK) { return; }
 
                 ConnectFromQuickCombobox(usrForm.Console, usrForm.NewWindow, usrForm.Credentials);
             }
@@ -907,6 +1002,7 @@ namespace Terminals
         private void ConnectFromQuickCombobox(bool forceConsole, bool forceNewWindow = false, ICredentialSet credentials = null)
         {
             string connectionName = tscConnectTo.Text;
+
             if(!string.IsNullOrEmpty(connectionName))
             {
                 _connectionsUiFactory.ConnectByFavoriteNames(new List<string>() { connectionName }, forceConsole, forceNewWindow, credentials);
@@ -922,8 +1018,7 @@ namespace Terminals
                 tsbConnect.PerformClick();
             }
 
-            if(e.KeyCode == Keys.Delete && tscConnectTo.DroppedDown &&
-                tscConnectTo.SelectedIndex != -1)
+            if(e.KeyCode == Keys.Delete && tscConnectTo.DroppedDown && tscConnectTo.SelectedIndex != -1)
             {
                 String connectionName = tscConnectTo.Items[tscConnectTo.SelectedIndex].ToString();
                 DeleteFavorite(connectionName);
@@ -994,10 +1089,15 @@ namespace Terminals
         private void AssingTitle()
         {
             TabControlItem selectedTab = tcTerminals.SelectedItem;
+
             if(_settings.ShowInformationToolTips && selectedTab != null)
+            {
                 Text = selectedTab.ToolTipText.Replace("\r\n", "; ");
+            }
             else
+            {
                 Text = Program.Info.GetAboutText(_persistence.Name);
+            }
         }
 
         /// -----------------------------------------------
@@ -1012,7 +1112,9 @@ namespace Terminals
         private void TcTerminals_MouseHover(object sender, EventArgs e)
         {
             if(tcTerminals != null && !tcTerminals.ShowTabs)
+            {
                 timerHover.Enabled = true;
+            }
         }
 
         /// -----------------------------------------------
@@ -1020,8 +1122,11 @@ namespace Terminals
         private void TcTerminals_MouseLeave(object sender, EventArgs e)
         {
             timerHover.Enabled = false;
+
             if(FullScreen && tcTerminals.ShowTabs && !tcTerminals.MenuOpen)
+            {
                 tcTerminals.ShowTabs = false;
+            }
 
             if(_currentToolTipItem != null)
             {
@@ -1068,11 +1173,16 @@ namespace Terminals
         {
             foreach(ToolStripItem menuItem in tcTerminals.Menu.Items)
             {
-                // the menu item always has name of connected favorite, so search by name works
+                // ------------------------------------------
+                // the menu item always has name of connected
+                // favorite, so search by name works
+
                 IFavorite favorite = _tabsFilter.FindFavoriteByTabTitle(menuItem.Text);
 
                 if(favorite != null)
+                {
                     menuItem.Image = PersistedFavorites.LoadFavoriteIcon(favorite);
+                }
             }
         }
 
@@ -1081,8 +1191,11 @@ namespace Terminals
         private void SaveTerminalsAsGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string newGroupName = NewGroupForm.AskFroGroupName(_persistence);
+
             if(string.IsNullOrEmpty(newGroupName))
+            {
                 return;
+            }
 
             IGroup group = FavoritesFactory.GetOrAddNewGroup(_persistence, newGroupName);
 
@@ -1130,7 +1243,7 @@ namespace Terminals
                     _currentToolTip.UseFading = true;
                     _currentToolTip.UseAnimation = true;
                     _currentToolTip.IsBalloon = false;
-                    _currentToolTip.Show(e.Item.ToolTipText, e.Item, (int)e.Item.StripRect.X, 2);
+                    _currentToolTip.Show(e.Item.ToolTipText, e.Item, (int) e.Item.StripRect.X, 2);
                     _currentToolTipItem = e.Item;
                     _currentToolTip.Active = true;
                 }
@@ -1257,9 +1370,13 @@ namespace Terminals
                 else
                 {
                     if(WindowState == FormWindowState.Normal)
+                    {
                         WindowState = FormWindowState.Minimized;
+                    }
                     else
+                    {
                         WindowState = _fullScreenSwitch.LastWindowState;
+                    }
                 }
             }
         }
@@ -1362,7 +1479,9 @@ namespace Terminals
         private void SpecialCommandsToolStrip_MouseClick(object sender, MouseEventArgs e)
         {
             if(e.Button == MouseButtons.Right)
+            {
                 ShortcutsContextMenu.Show(e.X, e.Y);
+            }
         }
 
         /// -----------------------------------------------
@@ -1370,8 +1489,11 @@ namespace Terminals
         private void SpecialCommandsToolStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             var command = e.ClickedItem.Tag as SpecialCommandConfigurationElement;
+
             if(command != null)
+            {
                 ExternalLinks.Launch(command);
+            }
         }
 
         /// -----------------------------------------------
@@ -1407,6 +1529,7 @@ namespace Terminals
         private void ToolStripButton4_Click(object sender, EventArgs e)
         {
             IConnection connection = _terminalsControler.CurrentConnection;
+
             if(connection != null && connection.Favorite != null)
             {
                 DesktopSize desktop = connection.Favorite.Display.DesktopSize;
@@ -1419,7 +1542,9 @@ namespace Terminals
         private void PbShowTagsFavorites_MouseMove(object sender, MouseEventArgs e)
         {
             if(_settings.AutoExapandTagsPanel)
+            {
                 HideShowFavoritesPanel(true);
+            }
         }
 
         /// -----------------------------------------------
@@ -1436,14 +1561,11 @@ namespace Terminals
 
         private void UpdateReleaseToolStripItem(ReleaseInfo downloaded)
         {
-            if(updateToolStripItem != null && !updateToolStripItem.Visible)
+            if(updateToolStripItem != null && !updateToolStripItem.Visible && downloaded.NewAvailable)
             {
-                if(downloaded.NewAvailable)
-                {
-                    updateToolStripItem.Visible = true;
-                    string newText = String.Format("{0} - {1}", updateToolStripItem.Text, downloaded.Version);
-                    updateToolStripItem.Text = newText;
-                }
+                updateToolStripItem.Visible = true;
+                string newText = String.Format("{0} - {1}", updateToolStripItem.Text, downloaded.Version);
+                updateToolStripItem.Text = newText;
             }
         }
 
@@ -1521,7 +1643,9 @@ namespace Terminals
         private void SplitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
         {
             if(splitContainer1.Panel1.Width > 15)
+            {
                 _settings.FavoritePanelWidth = splitContainer1.Panel1.Width;
+            }
         }
 
         /// -----------------------------------------------
@@ -1543,7 +1667,9 @@ namespace Terminals
         private void ExportConnectionsListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using(var frm = new ExportForm(_persistence, _connectionManager, _favoriteIcons))
+            {
                 frm.ShowDialog();
+            }
         }
 
         /// -----------------------------------------------
@@ -1582,10 +1708,13 @@ namespace Terminals
         {
             Screen[] screenArr = Screen.AllScreens;
             Int32 with = 0;
+            
             if(!_allScreens)
             {
                 if(WindowState == FormWindowState.Maximized)
+                {
                     WindowState = FormWindowState.Normal;
+                }
 
                 foreach(Screen screen in screenArr)
                 {
@@ -1665,6 +1794,17 @@ namespace Terminals
         private void SpecialCommandsToolStrip_MouseClick(object sender, EventArgs e)
         {
 
+        }
+
+        // ------------------------------------------------
+
+        private void OnMainFormKeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Modifiers == Keys.Alt && e.KeyCode == Keys.M && menuStrip.Visible == false)
+            {
+                menuStrip.Visible = true;
+                menubarToolStripMenuItem.Checked = true;
+            }
         }
     }
 }

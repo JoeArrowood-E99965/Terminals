@@ -500,6 +500,7 @@ namespace Terminals
             private void ClearAddToGroupMenuItem()
             {
                 var dropDowns = this.addTerminalToGroupToolStripMenuItem.DropDownItems;
+
                 for (int index = dropDowns.Count -1; 0 <= index; index--)
                 {
                     var menuItem = (ToolStripMenuItem)dropDowns[index];
@@ -519,6 +520,7 @@ namespace Terminals
             private void RemoveGroupsFromGroupsMenu()
             {
                 Int32 seperatorIndex = this.groupsToolStripMenuItem.DropDownItems.IndexOf(this.groupsSeparator);
+
                 for (Int32 index = this.groupsToolStripMenuItem.DropDownItems.Count - 1; index > seperatorIndex; index--)
                 {
                     var menuItem = this.groupsToolStripMenuItem.DropDownItems[index];
