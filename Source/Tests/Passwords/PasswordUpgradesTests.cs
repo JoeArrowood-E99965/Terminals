@@ -48,16 +48,20 @@ namespace Tests.Passwords
             Assert.IsFalse(askedForPassword, "Empty config file shouldn't ask for password");
         }
 
+        [TestMethod]
         [DeploymentItem(TestDataFiles.TESTDATA_DIRECTORY + NOMASTER_CONFIG_FILE)]
         [DeploymentItem(TestDataFiles.TESTDATA_DIRECTORY + NOMASTER_CREDENTIALS_FILE)]
-        [TestMethod]
         public void V2UpgradeNoMasterPasswordConfigTest()
         {
             this.UpgradePasswordsTestInitialize(NOMASTER_CONFIG_FILE, NOMASTER_CREDENTIALS_FILE);
+            
             // simply nothing to upgrade, procedure shouldn't fail.
+            
             IPersistence persistence = this.RunUpgrade();
+            
             Assert.IsFalse(askedForPassword, "Config file shouldn't ask for password");
             bool masterStillValid = PasswordFunctions2.MasterPasswordIsValid(string.Empty, settings.MasterPasswordHash);
+            
             Assert.IsTrue(masterStillValid, "Master password upgrade failed.");
             AssertUserAndCredential(persistence);
         }
@@ -79,12 +83,15 @@ namespace Tests.Passwords
         private static void AssertUserAndCredential(IPersistence persistence)
         {
             // we don't have to authenticate, because it was already done by upgrade
+
             IFavorite favorite = persistence.Favorites.First();
             var guardedSecurity = new GuardedCredential(favorite.Security, persistence.Security);
+
             Assert.AreEqual(PasswordTests.USERPASSWORD, guardedSecurity.Password, "Upgrade favorite password failed.");
 
             ICredentialSet credential = persistence.Credentials.First();
             var guarded = new GuardedCredential(credential, persistence.Security);
+
             Assert.AreEqual(TEST_PASSWORD, guarded.UserName, "Credential user name upgrade failed.");
             Assert.AreEqual(TEST_PASSWORD, guarded.Password, "Credential password upgrade failed.");
         }

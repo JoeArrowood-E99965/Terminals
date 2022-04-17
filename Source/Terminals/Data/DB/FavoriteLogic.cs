@@ -109,23 +109,11 @@ namespace Terminals.Data.DB
             }
             set
             {
+                // Do Nothing Here
             }
         }
 
-        // because of the disposable image, favorite should implement IDisposable
-        private Image toolBarIcon;
-
-        public Image ToolBarIconImage
-        {
-            get
-            {
-                return this.toolBarIcon;
-            }
-            set
-            {
-                this.toolBarIcon = value;
-            }
-        }
+        public Image ToolBarIconImage { get; set; }
 
         public string GroupNames
         {

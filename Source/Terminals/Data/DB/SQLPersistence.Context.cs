@@ -15,19 +15,23 @@ namespace Terminals.Data.DB
     using System.Data.Entity.Infrastructure;
     
     internal partial class Database : DbContext
-    {
+    {    
+        internal DbSet<DbGroup> Groups { get; set; }
+        internal DbSet<DbFavorite> Favorites { get; set; }
+        internal DbSet<DbSecurityOptions> Security { get; set; }
+        internal DbSet<DbCredentialBase> CredentialBase { get; set; }
+        internal DbSet<DbDisplayOptions> DisplayOptions { get; set; }
+        internal DbSet<DbBeforeConnectExecute> BeforeConnectExecute { get; set; }
+
+        /// -----------------------------------------------
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
         }
-    
-        internal DbSet<DbBeforeConnectExecute> BeforeConnectExecute { get; set; }
-        internal DbSet<DbCredentialBase> CredentialBase { get; set; }
-        internal DbSet<DbDisplayOptions> DisplayOptions { get; set; }
-        internal DbSet<DbFavorite> Favorites { get; set; }
-        internal DbSet<DbGroup> Groups { get; set; }
-        internal DbSet<DbSecurityOptions> Security { get; set; }
-    
+
+        /// -----------------------------------------------
+
         private ObjectResult<string> GetFavoriteProtocolProperties(Nullable<int> favoriteId)
         {
             var favoriteIdParameter = favoriteId.HasValue ?
@@ -36,7 +40,9 @@ namespace Terminals.Data.DB
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("GetFavoriteProtocolProperties", favoriteIdParameter);
         }
-    
+
+        /// -----------------------------------------------
+
         internal virtual ObjectResult<Nullable<int>> GetFavoritesHistoryByDate(Nullable<System.DateTime> from, Nullable<System.DateTime> to)
         {
             var fromParameter = from.HasValue ?
@@ -49,7 +55,9 @@ namespace Terminals.Data.DB
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetFavoritesHistoryByDate", fromParameter, toParameter);
         }
-    
+
+        /// -----------------------------------------------
+
         internal virtual int InsertHistory(Nullable<int> favoriteId, Nullable<System.DateTime> date, string userSid)
         {
             var favoriteIdParameter = favoriteId.HasValue ?
@@ -66,7 +74,9 @@ namespace Terminals.Data.DB
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertHistory", favoriteIdParameter, dateParameter, userSidParameter);
         }
-    
+
+        /// -----------------------------------------------
+
         internal virtual int UpdateFavoriteProtocolProperties(Nullable<int> favoriteId, string protocolProperties)
         {
             var favoriteIdParameter = favoriteId.HasValue ?
@@ -79,7 +89,9 @@ namespace Terminals.Data.DB
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("UpdateFavoriteProtocolProperties", favoriteIdParameter, protocolPropertiesParameter);
         }
-    
+
+        /// -----------------------------------------------
+
         private int UpdateMasterPasswordKey(string newKey)
         {
             var newKeyParameter = newKey != null ?
@@ -88,12 +100,16 @@ namespace Terminals.Data.DB
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("UpdateMasterPasswordKey", newKeyParameter);
         }
-    
+
+        /// -----------------------------------------------
+
         private ObjectResult<string> GetMasterPasswordKey()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("GetMasterPasswordKey");
         }
-    
+
+        /// -----------------------------------------------
+
         public virtual int SetFavoriteIcon(Nullable<int> favoriteId, byte[] iconData)
         {
             var favoriteIdParameter = favoriteId.HasValue ?
@@ -106,7 +122,9 @@ namespace Terminals.Data.DB
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SetFavoriteIcon", favoriteIdParameter, iconDataParameter);
         }
-    
+
+        /// -----------------------------------------------
+
         private ObjectResult<byte[]> GetFavoriteIcon(Nullable<int> favoriteId)
         {
             var favoriteIdParameter = favoriteId.HasValue ?
@@ -115,7 +133,9 @@ namespace Terminals.Data.DB
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<byte[]>("GetFavoriteIcon", favoriteIdParameter);
         }
-    
+
+        /// -----------------------------------------------
+
         public virtual ObjectResult<Nullable<int>> GetFavoritesInGroup(Nullable<int> groupId)
         {
             var groupIdParameter = groupId.HasValue ?
@@ -124,7 +144,9 @@ namespace Terminals.Data.DB
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetFavoritesInGroup", groupIdParameter);
         }
-    
+
+        /// -----------------------------------------------
+
         public virtual ObjectResult<Nullable<int>> GetFavoriteGroups(Nullable<int> favoriteId)
         {
             var favoriteIdParameter = favoriteId.HasValue ?
@@ -133,7 +155,9 @@ namespace Terminals.Data.DB
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("GetFavoriteGroups", favoriteIdParameter);
         }
-    
+
+        /// -----------------------------------------------
+
         public virtual int InsertFavoritesInGroup(Nullable<int> favoriteId, Nullable<int> groupId)
         {
             var favoriteIdParameter = favoriteId.HasValue ?
@@ -146,7 +170,9 @@ namespace Terminals.Data.DB
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InsertFavoritesInGroup", favoriteIdParameter, groupIdParameter);
         }
-    
+
+        /// -----------------------------------------------
+
         public virtual int DeleteFavoritesInGroup(Nullable<int> favoriteId, Nullable<int> groupId)
         {
             var favoriteIdParameter = favoriteId.HasValue ?
@@ -159,7 +185,9 @@ namespace Terminals.Data.DB
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DeleteFavoritesInGroup", favoriteIdParameter, groupIdParameter);
         }
-    
+
+        /// -----------------------------------------------
+
         public virtual int ClearHistory()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ClearHistory");

@@ -149,10 +149,12 @@ namespace Tests.SqlPersisted
         [TestMethod]
         public void AddFavorite_CachesAddedFavorite()
         {
-            IGroup group = this.AddGroupAToPrimaryPersistence();
-            DbFavorite favorite = this.AddFavoriteToPrimaryPersistence();
+            var group = this.AddGroupAToPrimaryPersistence() as IGroup;
+            var favorite = this.AddFavoriteToPrimaryPersistence();
+
             group.AddFavorite(favorite);
             List<IFavorite> favorites = group.Favorites;
+
             Assert.AreEqual(1, favorites.Count, "Group favorites count doesn't match.");
             Assert.AreEqual(1, this.updatedCount, "Group update event didn't reach properly.");
         }

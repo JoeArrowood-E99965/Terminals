@@ -182,7 +182,7 @@ namespace Terminals.Data.DB
                 // release protocolProperties, icon, other detail properties, not loaded with Entity
                 this.protocolPropertiesLoaded = false;
                 // don't dispose, because there is may be shared default protocol icon, which is still in use
-                this.favorite.toolBarIcon = null;
+                this.favorite.ToolBarIconImage = null;
                 this.ReleaseReferences();
             }
 
