@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using Terminals.Common.Connections;
+using System.Drawing;
+using System.Collections.Generic;
+
 using Terminals.Converters;
+using Terminals.Common.Connections;
 
 namespace Terminals.Data.DB
 {
@@ -13,20 +14,29 @@ namespace Terminals.Data.DB
 
         private StoredCredentials credentials;
 
+        /// -----------------------------------------------
         /// <summary>
-        /// cant be set in constructor, because the constructor is used by EF when loading the entities
+        ///     cant be set in constructor, because the 
+        ///     constructor is used by EF when loading the entities
         /// </summary>
+        
         private bool isNewlyCreated;
 
         internal FavoriteDetails Details { get; private set; }
 
+        /// -----------------------------------------------
         /// <summary>
-        /// Should be never null to prevent access violations
+        ///     Should be never null to prevent access violations
         /// </summary>
+        
         private ProtocolOptions protocolProperties;
 
-        // for backward compatibility with the file persistence only
+        /// -----------------------------------------------
+        /// For backward compatibility with the file persistence only
+
         private Guid guid;
+
+        /// -----------------------------------------------
 
         internal Guid Guid
         {
@@ -39,10 +49,14 @@ namespace Terminals.Data.DB
             }
         }
 
+        /// -----------------------------------------------
+
         Guid IFavorite.Id
         {
             get { return this.Guid; }
         }
+
+        /// -----------------------------------------------
 
         IBeforeConnectExecuteOptions IFavorite.ExecuteBeforeConnect
         {
@@ -53,6 +67,8 @@ namespace Terminals.Data.DB
             }
         }
 
+        /// -----------------------------------------------
+
         IDisplayOptions IFavorite.Display
         {
             get
@@ -62,6 +78,8 @@ namespace Terminals.Data.DB
             }
         }
 
+        /// -----------------------------------------------
+
         ISecurityOptions IFavorite.Security
         {
             get
@@ -69,6 +87,8 @@ namespace Terminals.Data.DB
                 return this.GetSecurity();
             }
         }
+
+        /// -----------------------------------------------
 
         private DbSecurityOptions GetSecurity()
         {
@@ -78,16 +98,22 @@ namespace Terminals.Data.DB
             return this.Details.Security;
         }
 
+        /// -----------------------------------------------
+
         List<IGroup> IFavorite.Groups
         {
             get { return GetInvariantGroups(); }
         }
 
+        /// -----------------------------------------------
         /// <summary>
-        /// Gets or sets the protocol specific container. This isn't a part of an entity,
-        /// because we are using lazy loading of this property and we don't want to cache
-        /// its xml persisted content.
+        ///     Gets or sets the protocol specific container. 
+        ///     This isn't a part of an entity,
+        ///     because we are using lazy loading of this 
+        ///     property and we don't want to cache its xml 
+        ///     persisted content.
         /// </summary>
+
         public ProtocolOptions ProtocolProperties
         {
             get
@@ -97,10 +123,14 @@ namespace Terminals.Data.DB
             }
         }
 
+        /// -----------------------------------------------
         /// <summary>
-        /// Gets empty string. Set loads the image from file and updates the icon reference in database.
-        /// The string get/set image file path to import/export favorite icon isn't supported in database persistence.
+        ///     Gets empty string. Set loads the image from 
+        ///     file and updates the icon reference in database.
+        ///     The string get/set image file path to import/export 
+        ///     favorite icon isn't supported in database persistence.
         /// </summary>
+
         public string ToolBarIconFile
         {
             get
@@ -115,6 +145,8 @@ namespace Terminals.Data.DB
 
         public Image ToolBarIconImage { get; set; }
 
+        /// -----------------------------------------------
+
         public string GroupNames
         {
             get
@@ -125,6 +157,8 @@ namespace Terminals.Data.DB
         }
 
         private int id;
+
+        /// -----------------------------------------------
 
         public int Id
         {
@@ -139,21 +173,17 @@ namespace Terminals.Data.DB
             }
         }
 
-        private string protocol;
+        /// -----------------------------------------------
 
-        public string Protocol
-        {
-            get { return this.protocol; }
-            set
-            {
-                this.protocol = value;
-            }
-        }
+        public string Protocol { get; set; }
 
+        /// -----------------------------------------------
         /// <summary>
-        /// Initializes new instance of a favorite and sets its properties to default values,
-        /// which aren't defined by database.
+        ///     Initializes new instance of a favorite and 
+        ///     sets its properties to default values,
+        ///     which aren't defined by database.
         /// </summary>
+
         public DbFavorite()
         {
             this.Groups = new HashSet<DbGroup>();
@@ -162,11 +192,15 @@ namespace Terminals.Data.DB
             this.Details = new FavoriteDetails(this);
         }
 
+        /// -----------------------------------------------
+
         internal void MarkAsNewlyCreated()
         {
             this.isNewlyCreated = true;
             this.Details.LoadFieldsFromReferences();
         }
+
+        /// -----------------------------------------------
 
         IFavorite IFavorite.Copy()
         {
@@ -175,6 +209,8 @@ namespace Terminals.Data.DB
             return copy;
         }
 
+        /// -----------------------------------------------
+
         void IFavorite.UpdateFrom(IFavorite source)
         {
             var sourceFavorite = source as DbFavorite;
@@ -182,6 +218,8 @@ namespace Terminals.Data.DB
                 return;
             this.UpdateFrom(sourceFavorite);
         }
+
+        /// -----------------------------------------------
 
         private void UpdateFrom(DbFavorite source)
         {
@@ -206,6 +244,8 @@ namespace Terminals.Data.DB
             this.AssignStores(source.groups, source.credentials, source.Details.Dispatcher);
         }
 
+        /// -----------------------------------------------
+
         bool IStoreIdEquals<IFavorite>.StoreIdEquals(IFavorite oponent)
         {
             var oponentFavorite = oponent as DbFavorite;
@@ -215,10 +255,14 @@ namespace Terminals.Data.DB
             return oponentFavorite.Id == this.Id;
         }
 
+        /// -----------------------------------------------
+
         public int GetStoreIdHash()
         {
             return this.Id.GetHashCode();
         }
+
+        /// -----------------------------------------------
 
         private List<IGroup> GetInvariantGroups()
         {
@@ -229,6 +273,8 @@ namespace Terminals.Data.DB
                 .ToList();
         }
 
+        /// -----------------------------------------------
+
         internal void AssignStores(Groups groups, StoredCredentials credentials, DataDispatcher dispatcher)
         {
             this.groups = groups;
@@ -236,15 +282,21 @@ namespace Terminals.Data.DB
             this.Details.Dispatcher = dispatcher;
         }
 
+        /// -----------------------------------------------
+
         internal void SaveDetails(Database database)
         {
             this.Details.Save(database);
         }
 
+        /// -----------------------------------------------
+
         internal void ReleaseLoadedDetails()
         {
             this.Details.ReleaseLoadedDetails();
         }
+
+        /// -----------------------------------------------
 
         public override String ToString()
         {
