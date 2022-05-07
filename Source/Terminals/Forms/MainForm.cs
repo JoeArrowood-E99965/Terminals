@@ -1802,8 +1802,10 @@ namespace Terminals
         {
             if(e.Modifiers == Keys.Alt && e.KeyCode == Keys.M && menuStrip.Visible == false)
             {
-                menuStrip.Visible = true;
+                menuStrip.Visible = true;                
                 menubarToolStripMenuItem.Checked = true;
+
+                StandardToolbarToolStripMenuItem_Click(null, null);
             }
         }
     }
