@@ -136,31 +136,31 @@ namespace Terminals.Data.DB
             }
         }
 
-        private int id;
+        //private int id;
 
-        public int Id
-        {
-            get
-            {
-                return this.id;
-            }
-            set
-            {
-                this.id = value;
-                this.guid = GuidConverter.ToGuid(value); 
-            }
-        }
+        //public int Id
+        //{
+        //    get
+        //    {
+        //        return this.id;
+        //    }
+        //    set
+        //    {
+        //        this.id = value;
+        //        this.guid = GuidConverter.ToGuid(value); 
+        //    }
+        //}
 
         private string protocol;
 
-        public string Protocol
-        {
-            get { return this.protocol; }
-            set
-            {
-                this.protocol = value;
-            }
-        }
+        //public string Protocol
+        //{
+        //    get { return this.protocol; }
+        //    set
+        //    {
+        //        this.protocol = value;
+        //    }
+        //}
 
         /// <summary>
         /// Initializes new instance of a favorite and sets its properties to default values,
