@@ -40,8 +40,6 @@ namespace Terminals
             this.timerHover = new System.Windows.Forms.Timer(this.components);
             this.MainWindowNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.QuickContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.tabControlItem1 = new TabControl.TabControlItem();
-            this.tabControlItem2 = new TabControl.TabControlItem();
             this.toolStripContainer = new Terminals.Forms.Controls.ToolStripContainer();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pnlTagsFavorites = new System.Windows.Forms.Panel();
@@ -50,6 +48,36 @@ namespace Terminals
             this.pnlShowTagsFavorites = new System.Windows.Forms.Panel();
             this.pbShowTagsFavorites = new System.Windows.Forms.PictureBox();
             this.tcTerminals = new TabControl.TabControl();
+            this.favoriteToolBar = new System.Windows.Forms.ToolStrip();
+            this.tsRemoteToolbar = new System.Windows.Forms.ToolStrip();
+            this.tsbCMD = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolbarStd = new System.Windows.Forms.ToolStrip();
+            this.tsbNewTerminal = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.tscConnectTo = new System.Windows.Forms.ToolStripComboBox();
+            this.tsbConnect = new System.Windows.Forms.ToolStripButton();
+            this.tsbConnectToConsole = new System.Windows.Forms.ToolStripButton();
+            this.tsbConnectAs = new System.Windows.Forms.ToolStripButton();
+            this.tsbDisconnect = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonReconnect = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbManageConnections = new System.Windows.Forms.ToolStripButton();
+            this.CredentialManagementToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbGrabInput = new System.Windows.Forms.ToolStripButton();
+            this.tsbFullScreen = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbTags = new System.Windows.Forms.ToolStripButton();
+            this.tsbFavorites = new System.Windows.Forms.ToolStripButton();
+            this.CaptureScreenToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonCaptureManager = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
+            this.SpecialCommandsToolStrip = new System.Windows.Forms.ToolStrip();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newTerminalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,36 +129,8 @@ namespace Terminals
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateToolStripItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsRemoteToolbar = new System.Windows.Forms.ToolStrip();
-            this.tsbCMD = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.favoriteToolBar = new System.Windows.Forms.ToolStrip();
-            this.SpecialCommandsToolStrip = new System.Windows.Forms.ToolStrip();
-            this.toolbarStd = new System.Windows.Forms.ToolStrip();
-            this.tsbNewTerminal = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.tscConnectTo = new System.Windows.Forms.ToolStripComboBox();
-            this.tsbConnect = new System.Windows.Forms.ToolStripButton();
-            this.tsbConnectToConsole = new System.Windows.Forms.ToolStripButton();
-            this.tsbConnectAs = new System.Windows.Forms.ToolStripButton();
-            this.tsbDisconnect = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonReconnect = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbManageConnections = new System.Windows.Forms.ToolStripButton();
-            this.CredentialManagementToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbGrabInput = new System.Windows.Forms.ToolStripButton();
-            this.tsbFullScreen = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbTags = new System.Windows.Forms.ToolStripButton();
-            this.tsbFavorites = new System.Windows.Forms.ToolStripButton();
-            this.CaptureScreenToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonCaptureManager = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
+            this.tabControlItem1 = new TabControl.TabControlItem();
+            this.tabControlItem2 = new TabControl.TabControlItem();
             this.ShortcutsContextMenu.SuspendLayout();
             this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
@@ -145,9 +145,9 @@ namespace Terminals
             this.pnlShowTagsFavorites.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbShowTagsFavorites)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tcTerminals)).BeginInit();
-            this.menuStrip.SuspendLayout();
             this.tsRemoteToolbar.SuspendLayout();
             this.toolbarStd.SuspendLayout();
+            this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // ShortcutsContextMenu
@@ -196,22 +196,6 @@ namespace Terminals
             this.QuickContextMenu.Size = new System.Drawing.Size(61, 4);
             this.QuickContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.QuickContextMenu_Opening);
             // 
-            // tabControlItem1
-            // 
-            this.tabControlItem1.IsDrawn = true;
-            this.tabControlItem1.Name = "tabControlItem1";
-            this.tabControlItem1.TabIndex = 2;
-            this.tabControlItem1.Title = "TabControl Page 3";
-            this.tabControlItem1.ToolTipText = "";
-            // 
-            // tabControlItem2
-            // 
-            this.tabControlItem2.IsDrawn = true;
-            this.tabControlItem2.Name = "tabControlItem2";
-            this.tabControlItem2.TabIndex = 3;
-            this.tabControlItem2.Title = "TabControl Page 4";
-            this.tabControlItem2.ToolTipText = "";
-            // 
             // toolStripContainer
             // 
             // 
@@ -229,9 +213,9 @@ namespace Terminals
             // 
             // toolStripContainer.TopToolStripPanel
             // 
-            this.toolStripContainer.TopToolStripPanel.Controls.Add(this.menuStrip);
-            this.toolStripContainer.TopToolStripPanel.Controls.Add(this.tsRemoteToolbar);
             this.toolStripContainer.TopToolStripPanel.Controls.Add(this.favoriteToolBar);
+            this.toolStripContainer.TopToolStripPanel.Controls.Add(this.tsRemoteToolbar);
+            this.toolStripContainer.TopToolStripPanel.Controls.Add(this.menuStrip);
             this.toolStripContainer.TopToolStripPanel.Controls.Add(this.SpecialCommandsToolStrip);
             this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolbarStd);
             // 
@@ -335,6 +319,316 @@ namespace Terminals
             this.tcTerminals.MouseLeave += new System.EventHandler(this.TcTerminals_MouseLeave);
             this.tcTerminals.MouseHover += new System.EventHandler(this.TcTerminals_MouseHover);
             // 
+            // favoriteToolBar
+            // 
+            this.favoriteToolBar.Dock = System.Windows.Forms.DockStyle.None;
+            this.favoriteToolBar.Location = new System.Drawing.Point(39, 0);
+            this.favoriteToolBar.Name = "favoriteToolBar";
+            this.favoriteToolBar.Size = new System.Drawing.Size(111, 25);
+            this.favoriteToolBar.TabIndex = 4;
+            // 
+            // tsRemoteToolbar
+            // 
+            this.tsRemoteToolbar.Dock = System.Windows.Forms.DockStyle.None;
+            this.tsRemoteToolbar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsbCMD,
+            this.toolStripButton1});
+            this.tsRemoteToolbar.Location = new System.Drawing.Point(3, 24);
+            this.tsRemoteToolbar.Name = "tsRemoteToolbar";
+            this.tsRemoteToolbar.Size = new System.Drawing.Size(58, 25);
+            this.tsRemoteToolbar.TabIndex = 3;
+            this.tsRemoteToolbar.Visible = false;
+            // 
+            // tsbCMD
+            // 
+            this.tsbCMD.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbCMD.Image = global::Terminals.Properties.Resources.application_xp_terminal;
+            this.tsbCMD.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbCMD.Name = "tsbCMD";
+            this.tsbCMD.Size = new System.Drawing.Size(23, 22);
+            this.tsbCMD.Text = "toolStripButton1";
+            this.tsbCMD.Click += new System.EventHandler(this.TsbCmd_Click);
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.Click += new System.EventHandler(this.ToolStripButton1_Click);
+            // 
+            // toolbarStd
+            // 
+            this.toolbarStd.AllowItemReorder = true;
+            this.toolbarStd.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolbarStd.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsbNewTerminal,
+            this.toolStripSeparator1,
+            this.toolStripLabel1,
+            this.tscConnectTo,
+            this.tsbConnect,
+            this.tsbConnectToConsole,
+            this.tsbConnectAs,
+            this.tsbDisconnect,
+            this.toolStripButtonReconnect,
+            this.toolStripSeparator3,
+            this.tsbManageConnections,
+            this.CredentialManagementToolStripButton,
+            this.toolStripSeparator2,
+            this.tsbGrabInput,
+            this.tsbFullScreen,
+            this.toolStripButton4,
+            this.toolStripSeparator6,
+            this.tsbTags,
+            this.tsbFavorites,
+            this.CaptureScreenToolStripButton,
+            this.toolStripButtonCaptureManager,
+            this.toolStripSeparator4,
+            this.toolStripButton2,
+            this.toolStripButton5});
+            this.toolbarStd.Location = new System.Drawing.Point(114, 49);
+            this.toolbarStd.Name = "toolbarStd";
+            this.toolbarStd.Size = new System.Drawing.Size(704, 25);
+            this.toolbarStd.TabIndex = 2;
+            // 
+            // tsbNewTerminal
+            // 
+            this.tsbNewTerminal.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbNewTerminal.Image = global::Terminals.Properties.Resources.add;
+            this.tsbNewTerminal.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbNewTerminal.Name = "tsbNewTerminal";
+            this.tsbNewTerminal.Size = new System.Drawing.Size(23, 22);
+            this.tsbNewTerminal.ToolTipText = "New Favorite (Ctrl+N)";
+            this.tsbNewTerminal.Click += new System.EventHandler(this.NewTerminalToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(70, 22);
+            this.toolStripLabel1.Text = "Connect To:";
+            // 
+            // tscConnectTo
+            // 
+            this.tscConnectTo.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
+            this.tscConnectTo.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.tscConnectTo.Name = "tscConnectTo";
+            this.tscConnectTo.Size = new System.Drawing.Size(199, 25);
+            this.tscConnectTo.Sorted = true;
+            this.tscConnectTo.ToolTipText = resources.GetString("tscConnectTo.ToolTipText");
+            this.tscConnectTo.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TscConnectTo_KeyDown);
+            this.tscConnectTo.TextChanged += new System.EventHandler(this.TscConnectTo_TextChanged);
+            // 
+            // tsbConnect
+            // 
+            this.tsbConnect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbConnect.Enabled = false;
+            this.tsbConnect.Image = global::Terminals.Properties.Resources.application_lightning;
+            this.tsbConnect.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbConnect.Name = "tsbConnect";
+            this.tsbConnect.Size = new System.Drawing.Size(23, 22);
+            this.tsbConnect.ToolTipText = "Connect To Server";
+            this.tsbConnect.Click += new System.EventHandler(this.TsbConnect_Click);
+            // 
+            // tsbConnectToConsole
+            // 
+            this.tsbConnectToConsole.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbConnectToConsole.Enabled = false;
+            this.tsbConnectToConsole.Image = global::Terminals.Properties.Resources.application_get;
+            this.tsbConnectToConsole.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbConnectToConsole.Name = "tsbConnectToConsole";
+            this.tsbConnectToConsole.Size = new System.Drawing.Size(23, 22);
+            this.tsbConnectToConsole.ToolTipText = "Connect To Console";
+            this.tsbConnectToConsole.Click += new System.EventHandler(this.TsbConnectToConsole_Click);
+            // 
+            // tsbConnectAs
+            // 
+            this.tsbConnectAs.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbConnectAs.Enabled = false;
+            this.tsbConnectAs.Image = global::Terminals.Properties.Resources.application_user;
+            this.tsbConnectAs.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbConnectAs.Name = "tsbConnectAs";
+            this.tsbConnectAs.Size = new System.Drawing.Size(23, 22);
+            this.tsbConnectAs.ToolTipText = "Connect As...";
+            this.tsbConnectAs.Click += new System.EventHandler(this.TsbConnectAs_Click);
+            // 
+            // tsbDisconnect
+            // 
+            this.tsbDisconnect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbDisconnect.Enabled = false;
+            this.tsbDisconnect.Image = global::Terminals.Properties.Resources.disconnect;
+            this.tsbDisconnect.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbDisconnect.Name = "tsbDisconnect";
+            this.tsbDisconnect.Size = new System.Drawing.Size(23, 22);
+            this.tsbDisconnect.ToolTipText = "Disconnect From Server";
+            this.tsbDisconnect.Click += new System.EventHandler(this.TsbDisconnect_Click);
+            // 
+            // toolStripButtonReconnect
+            // 
+            this.toolStripButtonReconnect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonReconnect.Enabled = false;
+            this.toolStripButtonReconnect.Image = global::Terminals.Properties.Resources.Refresh;
+            this.toolStripButtonReconnect.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonReconnect.Name = "toolStripButtonReconnect";
+            this.toolStripButtonReconnect.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonReconnect.Text = "Reconnect";
+            this.toolStripButtonReconnect.Click += new System.EventHandler(this.ToolStripButtonReconnect_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
+            // tsbManageConnections
+            // 
+            this.tsbManageConnections.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbManageConnections.Image = global::Terminals.Properties.Resources.star;
+            this.tsbManageConnections.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbManageConnections.Name = "tsbManageConnections";
+            this.tsbManageConnections.Size = new System.Drawing.Size(23, 22);
+            this.tsbManageConnections.ToolTipText = "Organize Favorites";
+            this.tsbManageConnections.Click += new System.EventHandler(this.ManageConnectionsToolStripMenuItem_Click);
+            // 
+            // CredentialManagementToolStripButton
+            // 
+            this.CredentialManagementToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.CredentialManagementToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("CredentialManagementToolStripButton.Image")));
+            this.CredentialManagementToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.CredentialManagementToolStripButton.Name = "CredentialManagementToolStripButton";
+            this.CredentialManagementToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.CredentialManagementToolStripButton.Text = "Credential Management";
+            this.CredentialManagementToolStripButton.ToolTipText = "Credential Management";
+            this.CredentialManagementToolStripButton.Click += new System.EventHandler(this.CredentialManagementToolStripButton_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // tsbGrabInput
+            // 
+            this.tsbGrabInput.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbGrabInput.Enabled = false;
+            this.tsbGrabInput.Image = global::Terminals.Properties.Resources.keyboard;
+            this.tsbGrabInput.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbGrabInput.Name = "tsbGrabInput";
+            this.tsbGrabInput.Size = new System.Drawing.Size(23, 22);
+            this.tsbGrabInput.ToolTipText = "Grab Input (Ctrl+G)";
+            this.tsbGrabInput.Click += new System.EventHandler(this.TsbGrabInput_Click);
+            // 
+            // tsbFullScreen
+            // 
+            this.tsbFullScreen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbFullScreen.Image = global::Terminals.Properties.Resources.arrow_out;
+            this.tsbFullScreen.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbFullScreen.Name = "tsbFullScreen";
+            this.tsbFullScreen.Size = new System.Drawing.Size(23, 22);
+            this.tsbFullScreen.ToolTipText = "Full Screen (F11)";
+            this.tsbFullScreen.Click += new System.EventHandler(this.TsbFullScreen_Click);
+            // 
+            // toolStripButton4
+            // 
+            this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton4.Image = global::Terminals.Properties.Resources.Refresh;
+            this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton4.Name = "toolStripButton4";
+            this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton4.Text = "toolStripButton4";
+            this.toolStripButton4.Visible = false;
+            this.toolStripButton4.Click += new System.EventHandler(this.ToolStripButton4_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+            // 
+            // tsbTags
+            // 
+            this.tsbTags.CheckOnClick = true;
+            this.tsbTags.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbTags.Image = global::Terminals.Properties.Resources.tag;
+            this.tsbTags.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbTags.Name = "tsbTags";
+            this.tsbTags.Size = new System.Drawing.Size(23, 22);
+            this.tsbTags.ToolTipText = "Show/Hide Groups pane";
+            this.tsbTags.Click += new System.EventHandler(this.TsbTags_Click);
+            // 
+            // tsbFavorites
+            // 
+            this.tsbFavorites.CheckOnClick = true;
+            this.tsbFavorites.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbFavorites.Image = global::Terminals.Properties.Resources.star;
+            this.tsbFavorites.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbFavorites.Name = "tsbFavorites";
+            this.tsbFavorites.Size = new System.Drawing.Size(23, 22);
+            this.tsbFavorites.ToolTipText = "Show/Hide favorits pane";
+            this.tsbFavorites.Visible = false;
+            this.tsbFavorites.Click += new System.EventHandler(this.TsbFavorites_Click);
+            // 
+            // CaptureScreenToolStripButton
+            // 
+            this.CaptureScreenToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.CaptureScreenToolStripButton.Image = global::Terminals.Properties.Resources.camera;
+            this.CaptureScreenToolStripButton.ImageTransparentColor = System.Drawing.Color.FromArgb(((int)(((byte)(254)))), ((int)(((byte)(254)))), ((int)(((byte)(254)))));
+            this.CaptureScreenToolStripButton.Name = "CaptureScreenToolStripButton";
+            this.CaptureScreenToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.CaptureScreenToolStripButton.Text = "Capture Terminal Screen";
+            this.CaptureScreenToolStripButton.ToolTipText = "Capture Terminal Screen. This feature has to be enabled in application options fi" +
+    "rst.  (Ctrl+F12)";
+            this.CaptureScreenToolStripButton.Click += new System.EventHandler(this.CaptureScreenToolStripButton_Click);
+            // 
+            // toolStripButtonCaptureManager
+            // 
+            this.toolStripButtonCaptureManager.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonCaptureManager.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonCaptureManager.Image")));
+            this.toolStripButtonCaptureManager.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonCaptureManager.Name = "toolStripButtonCaptureManager";
+            this.toolStripButtonCaptureManager.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonCaptureManager.Text = "Screen Capture Manager";
+            this.toolStripButtonCaptureManager.Click += new System.EventHandler(this.ToolStripButtonCaptureManager_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButton2
+            // 
+            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton2.Image = global::Terminals.Properties.Resources.computer_link;
+            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton2.Name = "toolStripButton2";
+            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton2.Text = "Networking Tools";
+            this.toolStripButton2.Click += new System.EventHandler(this.ToolStripButton2_Click);
+            // 
+            // toolStripButton5
+            // 
+            this.toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton5.Image = global::Terminals.Properties.Resources.CompMgmt;
+            this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton5.Name = "toolStripButton5";
+            this.toolStripButton5.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton5.Text = "Computer Management (MMC)";
+            this.toolStripButton5.Click += new System.EventHandler(this.OpenLocalComputeManagement_Click);
+            // 
+            // SpecialCommandsToolStrip
+            // 
+            this.SpecialCommandsToolStrip.ContextMenuStrip = this.ShortcutsContextMenu;
+            this.SpecialCommandsToolStrip.Dock = System.Windows.Forms.DockStyle.None;
+            this.SpecialCommandsToolStrip.Location = new System.Drawing.Point(3, 49);
+            this.SpecialCommandsToolStrip.Name = "SpecialCommandsToolStrip";
+            this.SpecialCommandsToolStrip.Size = new System.Drawing.Size(111, 25);
+            this.SpecialCommandsToolStrip.TabIndex = 6;
+            this.SpecialCommandsToolStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.SpecialCommandsToolStrip_ItemClicked);
+            this.SpecialCommandsToolStrip.MouseClick += new System.Windows.Forms.MouseEventHandler(this.SpecialCommandsToolStrip_MouseClick);
+            // 
             // menuStrip
             // 
             this.menuStrip.Dock = System.Windows.Forms.DockStyle.None;
@@ -347,9 +641,9 @@ namespace Terminals
             this.toolsToolStripMenuItem,
             this.groupsToolStripMenuItem,
             this.helpToolStripMenuItem});
-            this.menuStrip.Location = new System.Drawing.Point(3, 0);
+            this.menuStrip.Location = new System.Drawing.Point(3, 25);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(315, 24);
+            this.menuStrip.Size = new System.Drawing.Size(370, 24);
             this.menuStrip.Stretch = false;
             this.menuStrip.TabIndex = 1;
             this.menuStrip.Text = "menuStrip1";
@@ -371,7 +665,7 @@ namespace Terminals
             this.newTerminalToolStripMenuItem.Image = global::Terminals.Properties.Resources.add;
             this.newTerminalToolStripMenuItem.Name = "newTerminalToolStripMenuItem";
             this.newTerminalToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newTerminalToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.newTerminalToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.newTerminalToolStripMenuItem.Text = "&New Favorite";
             this.newTerminalToolStripMenuItem.ToolTipText = "Creates a new favorite";
             this.newTerminalToolStripMenuItem.Click += new System.EventHandler(this.NewTerminalToolStripMenuItem_Click_1);
@@ -380,7 +674,7 @@ namespace Terminals
             // 
             this.toolStripMenuItemImport.Name = "toolStripMenuItemImport";
             this.toolStripMenuItemImport.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.toolStripMenuItemImport.Size = new System.Drawing.Size(215, 22);
+            this.toolStripMenuItemImport.Size = new System.Drawing.Size(216, 22);
             this.toolStripMenuItemImport.Text = "&Import connections";
             this.toolStripMenuItemImport.Click += new System.EventHandler(this.ToolStripMenuItemImport_Click);
             // 
@@ -388,7 +682,7 @@ namespace Terminals
             // 
             this.toolStripMenuItemExport.Name = "toolStripMenuItemExport";
             this.toolStripMenuItemExport.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-            this.toolStripMenuItemExport.Size = new System.Drawing.Size(215, 22);
+            this.toolStripMenuItemExport.Size = new System.Drawing.Size(216, 22);
             this.toolStripMenuItemExport.Text = "&Export connections";
             this.toolStripMenuItemExport.ToolTipText = "Opens export dialog to select connections to export into a xml file.";
             this.toolStripMenuItemExport.Click += new System.EventHandler(this.ExportConnectionsListToolStripMenuItem_Click);
@@ -396,13 +690,13 @@ namespace Terminals
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(212, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(213, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -511,7 +805,7 @@ namespace Terminals
             this.manageFavoritesToolStripMenuItem.Image = global::Terminals.Properties.Resources.star;
             this.manageFavoritesToolStripMenuItem.Name = "manageFavoritesToolStripMenuItem";
             this.manageFavoritesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.manageFavoritesToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.manageFavoritesToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
             this.manageFavoritesToolStripMenuItem.Text = "&Organize Favorites";
             this.manageFavoritesToolStripMenuItem.ToolTipText = "Organize your favorite connections";
             this.manageFavoritesToolStripMenuItem.Click += new System.EventHandler(this.ManageConnectionsToolStripMenuItem_Click);
@@ -519,7 +813,7 @@ namespace Terminals
             // organizeFavoritesToolbarToolStripMenuItem
             // 
             this.organizeFavoritesToolbarToolStripMenuItem.Name = "organizeFavoritesToolbarToolStripMenuItem";
-            this.organizeFavoritesToolbarToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.organizeFavoritesToolbarToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
             this.organizeFavoritesToolbarToolStripMenuItem.Text = "O&rganize Favorites Toolbar";
             this.organizeFavoritesToolbarToolStripMenuItem.ToolTipText = "Organize your favorite connections in toolbar";
             this.organizeFavoritesToolbarToolStripMenuItem.Click += new System.EventHandler(this.OrganizeFavoritesToolbarToolStripMenuItem_Click);
@@ -532,7 +826,7 @@ namespace Terminals
             this.disconnectToolStripMenuItem,
             this.reconnectToolStripMenuItem});
             this.terminalToolStripMenuItem.Name = "terminalToolStripMenuItem";
-            this.terminalToolStripMenuItem.Size = new System.Drawing.Size(65, 20);
+            this.terminalToolStripMenuItem.Size = new System.Drawing.Size(64, 20);
             this.terminalToolStripMenuItem.Text = "&Terminal";
             // 
             // grabInputToolStripMenuItem
@@ -591,7 +885,7 @@ namespace Terminals
             this.toolStripMenuItem2,
             this.optionsToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
             this.toolsToolStripMenuItem.DropDownOpening += new System.EventHandler(this.ToolsToolStripMenuItem_DropDownOpening);
             // 
@@ -809,315 +1103,21 @@ namespace Terminals
             this.updateToolStripItem.Visible = false;
             this.updateToolStripItem.Click += new System.EventHandler(this.UpdateToolStripItem_Click);
             // 
-            // tsRemoteToolbar
+            // tabControlItem1
             // 
-            this.tsRemoteToolbar.Dock = System.Windows.Forms.DockStyle.None;
-            this.tsRemoteToolbar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsbCMD,
-            this.toolStripButton1});
-            this.tsRemoteToolbar.Location = new System.Drawing.Point(3, 24);
-            this.tsRemoteToolbar.Name = "tsRemoteToolbar";
-            this.tsRemoteToolbar.Size = new System.Drawing.Size(58, 25);
-            this.tsRemoteToolbar.TabIndex = 3;
-            this.tsRemoteToolbar.Visible = false;
+            this.tabControlItem1.IsDrawn = true;
+            this.tabControlItem1.Name = "tabControlItem1";
+            this.tabControlItem1.TabIndex = 2;
+            this.tabControlItem1.Title = "TabControl Page 3";
+            this.tabControlItem1.ToolTipText = "";
             // 
-            // tsbCMD
+            // tabControlItem2
             // 
-            this.tsbCMD.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbCMD.Image = global::Terminals.Properties.Resources.application_xp_terminal;
-            this.tsbCMD.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbCMD.Name = "tsbCMD";
-            this.tsbCMD.Size = new System.Drawing.Size(23, 22);
-            this.tsbCMD.Text = "toolStripButton1";
-            this.tsbCMD.Click += new System.EventHandler(this.TsbCmd_Click);
-            // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "toolStripButton1";
-            this.toolStripButton1.Click += new System.EventHandler(this.ToolStripButton1_Click);
-            // 
-            // favoriteToolBar
-            // 
-            this.favoriteToolBar.Dock = System.Windows.Forms.DockStyle.None;
-            this.favoriteToolBar.Location = new System.Drawing.Point(3, 24);
-            this.favoriteToolBar.Name = "favoriteToolBar";
-            this.favoriteToolBar.Size = new System.Drawing.Size(111, 25);
-            this.favoriteToolBar.TabIndex = 4;
-            // 
-            // SpecialCommandsToolStrip
-            // 
-            this.SpecialCommandsToolStrip.ContextMenuStrip = this.ShortcutsContextMenu;
-            this.SpecialCommandsToolStrip.Dock = System.Windows.Forms.DockStyle.None;
-            this.SpecialCommandsToolStrip.Location = new System.Drawing.Point(662, 49);
-            this.SpecialCommandsToolStrip.Name = "SpecialCommandsToolStrip";
-            this.SpecialCommandsToolStrip.Size = new System.Drawing.Size(43, 25);
-            this.SpecialCommandsToolStrip.TabIndex = 6;
-            this.SpecialCommandsToolStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.SpecialCommandsToolStrip_ItemClicked);
-            this.SpecialCommandsToolStrip.MouseClick += new System.Windows.Forms.MouseEventHandler(this.SpecialCommandsToolStrip_MouseClick);
-            // 
-            // toolbarStd
-            // 
-            this.toolbarStd.AllowItemReorder = true;
-            this.toolbarStd.Dock = System.Windows.Forms.DockStyle.None;
-            this.toolbarStd.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsbNewTerminal,
-            this.toolStripSeparator1,
-            this.toolStripLabel1,
-            this.tscConnectTo,
-            this.tsbConnect,
-            this.tsbConnectToConsole,
-            this.tsbConnectAs,
-            this.tsbDisconnect,
-            this.toolStripButtonReconnect,
-            this.toolStripSeparator3,
-            this.tsbManageConnections,
-            this.CredentialManagementToolStripButton,
-            this.toolStripSeparator2,
-            this.tsbGrabInput,
-            this.tsbFullScreen,
-            this.toolStripButton4,
-            this.toolStripSeparator6,
-            this.tsbTags,
-            this.tsbFavorites,
-            this.CaptureScreenToolStripButton,
-            this.toolStripButtonCaptureManager,
-            this.toolStripSeparator4,
-            this.toolStripButton2,
-            this.toolStripButton5});
-            this.toolbarStd.Location = new System.Drawing.Point(3, 49);
-            this.toolbarStd.Name = "toolbarStd";
-            this.toolbarStd.Size = new System.Drawing.Size(659, 25);
-            this.toolbarStd.TabIndex = 2;
-            // 
-            // tsbNewTerminal
-            // 
-            this.tsbNewTerminal.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbNewTerminal.Image = global::Terminals.Properties.Resources.add;
-            this.tsbNewTerminal.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbNewTerminal.Name = "tsbNewTerminal";
-            this.tsbNewTerminal.Size = new System.Drawing.Size(23, 22);
-            this.tsbNewTerminal.ToolTipText = "New Favorite (Ctrl+N)";
-            this.tsbNewTerminal.Click += new System.EventHandler(this.NewTerminalToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripLabel1
-            // 
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(71, 22);
-            this.toolStripLabel1.Text = "Connect To:";
-            // 
-            // tscConnectTo
-            // 
-            this.tscConnectTo.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
-            this.tscConnectTo.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.tscConnectTo.Name = "tscConnectTo";
-            this.tscConnectTo.Size = new System.Drawing.Size(199, 25);
-            this.tscConnectTo.Sorted = true;
-            this.tscConnectTo.ToolTipText = resources.GetString("tscConnectTo.ToolTipText");
-            this.tscConnectTo.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TscConnectTo_KeyDown);
-            this.tscConnectTo.TextChanged += new System.EventHandler(this.TscConnectTo_TextChanged);
-            // 
-            // tsbConnect
-            // 
-            this.tsbConnect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbConnect.Enabled = false;
-            this.tsbConnect.Image = global::Terminals.Properties.Resources.application_lightning;
-            this.tsbConnect.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbConnect.Name = "tsbConnect";
-            this.tsbConnect.Size = new System.Drawing.Size(23, 22);
-            this.tsbConnect.ToolTipText = "Connect To Server";
-            this.tsbConnect.Click += new System.EventHandler(this.TsbConnect_Click);
-            // 
-            // tsbConnectToConsole
-            // 
-            this.tsbConnectToConsole.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbConnectToConsole.Enabled = false;
-            this.tsbConnectToConsole.Image = global::Terminals.Properties.Resources.application_get;
-            this.tsbConnectToConsole.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbConnectToConsole.Name = "tsbConnectToConsole";
-            this.tsbConnectToConsole.Size = new System.Drawing.Size(23, 22);
-            this.tsbConnectToConsole.ToolTipText = "Connect To Console";
-            this.tsbConnectToConsole.Click += new System.EventHandler(this.TsbConnectToConsole_Click);
-            // 
-            // tsbConnectAs
-            // 
-            this.tsbConnectAs.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbConnectAs.Enabled = false;
-            this.tsbConnectAs.Image = global::Terminals.Properties.Resources.application_user;
-            this.tsbConnectAs.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbConnectAs.Name = "tsbConnectAs";
-            this.tsbConnectAs.Size = new System.Drawing.Size(23, 22);
-            this.tsbConnectAs.ToolTipText = "Connect As...";
-            this.tsbConnectAs.Click += new System.EventHandler(this.TsbConnectAs_Click);
-            // 
-            // tsbDisconnect
-            // 
-            this.tsbDisconnect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbDisconnect.Enabled = false;
-            this.tsbDisconnect.Image = global::Terminals.Properties.Resources.disconnect;
-            this.tsbDisconnect.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbDisconnect.Name = "tsbDisconnect";
-            this.tsbDisconnect.Size = new System.Drawing.Size(23, 22);
-            this.tsbDisconnect.ToolTipText = "Disconnect From Server";
-            this.tsbDisconnect.Click += new System.EventHandler(this.TsbDisconnect_Click);
-            // 
-            // toolStripButtonReconnect
-            // 
-            this.toolStripButtonReconnect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonReconnect.Enabled = false;
-            this.toolStripButtonReconnect.Image = global::Terminals.Properties.Resources.Refresh;
-            this.toolStripButtonReconnect.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonReconnect.Name = "toolStripButtonReconnect";
-            this.toolStripButtonReconnect.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButtonReconnect.Text = "Reconnect";
-            this.toolStripButtonReconnect.Click += new System.EventHandler(this.ToolStripButtonReconnect_Click);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
-            // 
-            // tsbManageConnections
-            // 
-            this.tsbManageConnections.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbManageConnections.Image = global::Terminals.Properties.Resources.star;
-            this.tsbManageConnections.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbManageConnections.Name = "tsbManageConnections";
-            this.tsbManageConnections.Size = new System.Drawing.Size(23, 22);
-            this.tsbManageConnections.ToolTipText = "Organize Favorites";
-            this.tsbManageConnections.Click += new System.EventHandler(this.ManageConnectionsToolStripMenuItem_Click);
-            // 
-            // CredentialManagementToolStripButton
-            // 
-            this.CredentialManagementToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.CredentialManagementToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("CredentialManagementToolStripButton.Image")));
-            this.CredentialManagementToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.CredentialManagementToolStripButton.Name = "CredentialManagementToolStripButton";
-            this.CredentialManagementToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.CredentialManagementToolStripButton.Text = "Credential Management";
-            this.CredentialManagementToolStripButton.ToolTipText = "Credential Management";
-            this.CredentialManagementToolStripButton.Click += new System.EventHandler(this.CredentialManagementToolStripButton_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
-            // tsbGrabInput
-            // 
-            this.tsbGrabInput.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbGrabInput.Enabled = false;
-            this.tsbGrabInput.Image = global::Terminals.Properties.Resources.keyboard;
-            this.tsbGrabInput.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbGrabInput.Name = "tsbGrabInput";
-            this.tsbGrabInput.Size = new System.Drawing.Size(23, 22);
-            this.tsbGrabInput.ToolTipText = "Grab Input (Ctrl+G)";
-            this.tsbGrabInput.Click += new System.EventHandler(this.TsbGrabInput_Click);
-            // 
-            // tsbFullScreen
-            // 
-            this.tsbFullScreen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbFullScreen.Image = global::Terminals.Properties.Resources.arrow_out;
-            this.tsbFullScreen.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbFullScreen.Name = "tsbFullScreen";
-            this.tsbFullScreen.Size = new System.Drawing.Size(23, 22);
-            this.tsbFullScreen.ToolTipText = "Full Screen (F11)";
-            this.tsbFullScreen.Click += new System.EventHandler(this.TsbFullScreen_Click);
-            // 
-            // toolStripButton4
-            // 
-            this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton4.Image = global::Terminals.Properties.Resources.Refresh;
-            this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton4.Name = "toolStripButton4";
-            this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton4.Text = "toolStripButton4";
-            this.toolStripButton4.Visible = false;
-            this.toolStripButton4.Click += new System.EventHandler(this.ToolStripButton4_Click);
-            // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
-            // 
-            // tsbTags
-            // 
-            this.tsbTags.CheckOnClick = true;
-            this.tsbTags.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbTags.Image = global::Terminals.Properties.Resources.tag;
-            this.tsbTags.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbTags.Name = "tsbTags";
-            this.tsbTags.Size = new System.Drawing.Size(23, 22);
-            this.tsbTags.ToolTipText = "Show/Hide Groups pane";
-            this.tsbTags.Click += new System.EventHandler(this.TsbTags_Click);
-            // 
-            // tsbFavorites
-            // 
-            this.tsbFavorites.CheckOnClick = true;
-            this.tsbFavorites.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbFavorites.Image = global::Terminals.Properties.Resources.star;
-            this.tsbFavorites.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbFavorites.Name = "tsbFavorites";
-            this.tsbFavorites.Size = new System.Drawing.Size(23, 22);
-            this.tsbFavorites.ToolTipText = "Show/Hide favorits pane";
-            this.tsbFavorites.Visible = false;
-            this.tsbFavorites.Click += new System.EventHandler(this.TsbFavorites_Click);
-            // 
-            // CaptureScreenToolStripButton
-            // 
-            this.CaptureScreenToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.CaptureScreenToolStripButton.Image = global::Terminals.Properties.Resources.camera;
-            this.CaptureScreenToolStripButton.ImageTransparentColor = System.Drawing.Color.FromArgb(((int)(((byte)(254)))), ((int)(((byte)(254)))), ((int)(((byte)(254)))));
-            this.CaptureScreenToolStripButton.Name = "CaptureScreenToolStripButton";
-            this.CaptureScreenToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.CaptureScreenToolStripButton.Text = "Capture Terminal Screen";
-            this.CaptureScreenToolStripButton.ToolTipText = "Capture Terminal Screen. This feature has to be enabled in application options fi" +
-    "rst.  (Ctrl+F12)";
-            this.CaptureScreenToolStripButton.Click += new System.EventHandler(this.CaptureScreenToolStripButton_Click);
-            // 
-            // toolStripButtonCaptureManager
-            // 
-            this.toolStripButtonCaptureManager.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonCaptureManager.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonCaptureManager.Image")));
-            this.toolStripButtonCaptureManager.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonCaptureManager.Name = "toolStripButtonCaptureManager";
-            this.toolStripButtonCaptureManager.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButtonCaptureManager.Text = "Screen Capture Manager";
-            this.toolStripButtonCaptureManager.Click += new System.EventHandler(this.ToolStripButtonCaptureManager_Click);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripButton2
-            // 
-            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton2.Image = global::Terminals.Properties.Resources.computer_link;
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton2.Text = "Networking Tools";
-            this.toolStripButton2.Click += new System.EventHandler(this.ToolStripButton2_Click);
-            // 
-            // toolStripButton5
-            // 
-            this.toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton5.Image = global::Terminals.Properties.Resources.CompMgmt;
-            this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton5.Name = "toolStripButton5";
-            this.toolStripButton5.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton5.Text = "Computer Management (MMC)";
-            this.toolStripButton5.Click += new System.EventHandler(this.OpenLocalComputeManagement_Click);
+            this.tabControlItem2.IsDrawn = true;
+            this.tabControlItem2.Name = "tabControlItem2";
+            this.tabControlItem2.TabIndex = 3;
+            this.tabControlItem2.Title = "TabControl Page 4";
+            this.tabControlItem2.ToolTipText = "";
             // 
             // MainForm
             // 
@@ -1156,12 +1156,12 @@ namespace Terminals
             this.pnlShowTagsFavorites.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbShowTagsFavorites)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tcTerminals)).EndInit();
-            this.menuStrip.ResumeLayout(false);
-            this.menuStrip.PerformLayout();
             this.tsRemoteToolbar.ResumeLayout(false);
             this.tsRemoteToolbar.PerformLayout();
             this.toolbarStd.ResumeLayout(false);
             this.toolbarStd.PerformLayout();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
 
         }

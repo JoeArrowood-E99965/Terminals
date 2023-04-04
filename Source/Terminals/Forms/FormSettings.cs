@@ -18,8 +18,6 @@ namespace Terminals.Forms
         private Size lastNormalSize;
         private Point lastNormalLocation;
 
-        #region Constructors
-
         internal FormSettings(Form form)
         {
             this.form = form;
@@ -30,10 +28,6 @@ namespace Terminals.Forms
             this.form.Move += FormMove;
             this.Enabled = true;
         }
-
-        #endregion
-
-        #region Properties
 
         internal Boolean Enabled { get; set; }
 
@@ -52,10 +46,6 @@ namespace Terminals.Forms
                 return this.Settings.Forms[this.form.Name];
             }
         }
-
-        #endregion
-
-        #region Event handlers
 
         private void FormHandleDestroyed(object sender, EventArgs e)
         {
@@ -86,10 +76,6 @@ namespace Terminals.Forms
             SaveSizeAndLocation();
             SaveFormState();
         }
-
-        #endregion
-
-        #region Internal methods
 
         internal void LoadFormSize()
         {
@@ -125,10 +111,6 @@ namespace Terminals.Forms
             if (lastScreen == null)
                 this.form.Location = new Point(100, 100);
         }
-
-        #endregion
-
-        #region Private Methods
 
         private void SaveSizeAndLocation()
         {
@@ -254,7 +236,5 @@ namespace Terminals.Forms
                                candidate.Bounds.Y <= captionPoint.Y &&
                                captionPoint.Y < candidate.Bounds.Y + candidate.Bounds.Height);
         }
-
-        #endregion
     }
 }

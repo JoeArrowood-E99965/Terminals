@@ -51,7 +51,7 @@ namespace Terminals
                     this.mainForm.Visible = true;
 
                 this.SetFullScreen(goFullScreen);
-                mainForm.menuLoader.UpdateSwitchFullScreenMenuItemsVisibility(this.fullScreen);
+                mainForm._menuLoader.UpdateSwitchFullScreenMenuItemsVisibility(this.fullScreen);
 
                 if (!goFullScreen)
                     mainForm.LoadWindowState();
@@ -84,10 +84,10 @@ namespace Terminals
             private void GoFullScreen()
             {
                 this.mainForm.FormBorderStyle = FormBorderStyle.None;
-                if (this.mainForm.allScreens)
+                if (this.mainForm._allScreens)
                 {
                     var width = 0;
-                    if (this.mainForm.allScreens)
+                    if (this.mainForm._allScreens)
                         width += Screen.AllScreens.Sum(screen => screen.Bounds.Width);
 
                     this.mainForm.Width = width;

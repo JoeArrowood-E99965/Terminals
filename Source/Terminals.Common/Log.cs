@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+
 using log4net;
 using log4net.Appender;
 using log4net.Repository.Hierarchy;
@@ -9,6 +10,7 @@ namespace Terminals
     /// <summary>
     /// 1:1 adapter of logging provider
     /// </summary>
+
     public class Logging
     {
         private static readonly ILog log = LogManager.GetLogger("Terminals");
@@ -17,10 +19,15 @@ namespace Terminals
         {
             get
             {
+                // -----------------------------------------------------------
                 // different configuration can be defined by setup or by user.
+
                 FileAppender rootAppender = FindLogAppender();
-                if (rootAppender != null)
+
+                if(rootAppender != null)
+                {
                     return rootAppender.File;
+                }
 
                 return String.Empty;
             }
