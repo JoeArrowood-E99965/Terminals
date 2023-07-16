@@ -1131,6 +1131,7 @@ namespace Terminals
             this.MainMenuStrip = this.menuStrip;
             this.MinimumSize = new System.Drawing.Size(600, 400);
             this.Name = "MainForm";
+            this.ShowInTaskbar = true;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Terminals";
             this.Activated += new System.EventHandler(this.MainForm_Activated);
@@ -1163,7 +1164,6 @@ namespace Terminals
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
         #endregion
