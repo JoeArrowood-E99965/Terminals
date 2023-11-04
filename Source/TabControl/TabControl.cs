@@ -22,7 +22,6 @@ namespace TabControl
         internal static int PreferredHeight = 200;
 
         private const int DEF_HEADER_HEIGHT = 19;
-        //private int DEF_GLYPH_INDENT = 10;
         private int DEF_START_POS = 10;
         private const int DEF_GLYPH_WIDTH = 40;
 
@@ -111,23 +110,31 @@ namespace TabControl
 
             if(showTabs)
             {
-                TabControlItem selectedTabItem = this.SelectedItem;
+                TabControlItem selectedTabItem = SelectedItem;
 
                 // todo bug 32353 - first calculate all, then identify ragne of tabs to draw, and finally paint them 
-                for(int i = 0; i < this.Items.Count; i++)
+
+                for(int i = 0; i < Items.Count; i++)
                 {
                     TabControlItem currentItem = Items[i];
+
                     if(!currentItem.Visible && !DesignMode)
+                    {
                         continue;
+                    }
 
                     OnCalcTabPage(e.Graphics, currentItem);
                     currentItem.IsDrawn = false;
 
                     if(currentItem == selectedTabItem) //delay drawing active item to the end
+                    {
                         continue;
+                    }
 
                     if(!AllowDraw(currentItem))
+                    {
                         continue;
+                    }
 
                     OnDrawTabPage(e.Graphics, currentItem);
                 }
@@ -242,7 +249,9 @@ namespace TabControl
                     }
                 }
                 else
+                {
                     SelectedItem = null;
+                }
             }
         }
 
@@ -251,7 +260,7 @@ namespace TabControl
         public void ForceCloseTab(TabControlItem tabItem)
         {
             RemoveTab(tabItem);
-            this.OnTabControlItemClosed(tabItem);
+            OnTabControlItemClosed(tabItem);
         }
 
         // ------------------------------------------------
@@ -260,13 +269,14 @@ namespace TabControl
         {
             if(tabItem != null)
             {
-                this.SelectedItem = tabItem;
+                SelectedItem = tabItem;
                 TabControlItemClosingEventArgs args = new TabControlItemClosingEventArgs(SelectedItem);
                 OnTabControlItemClosing(args);
+                
                 if(SelectedItem != null && !args.Cancel && SelectedItem.CanClose)
                 {
                     RemoveTab(SelectedItem);
-                    this.OnTabControlItemClosed(tabItem);
+                    OnTabControlItemClosed(tabItem);
                 }
             }
         }
@@ -275,8 +285,10 @@ namespace TabControl
 
         protected override void OnClick(EventArgs e)
         {
-            if(this.IsMouseModdleClick(e))
-                this.CloseTabAtCurrentCursor();
+            if(IsMouseModdleClick(e))
+            {
+                CloseTabAtCurrentCursor();
+            }
 
             base.OnClick(e);
         }
@@ -293,8 +305,8 @@ namespace TabControl
 
         private void CloseTabAtCurrentCursor()
         {
-            TabControlItem selectedTab = this.GetTabItemByPoint(this.PointToClient(Cursor.Position));
-            this.CloseTab(selectedTab);
+            TabControlItem selectedTab = GetTabItemByPoint(PointToClient(Cursor.Position));
+            CloseTab(selectedTab);
         }
 
         // ------------------------------------------------
@@ -311,13 +323,15 @@ namespace TabControl
         {
             try
             {
-                this.HandleTablItemMouseUpActions(e);
-                bool handled = this.HandleMenuGlipMouseUp(e);
-                handled |= this.HandleCloseButtonMouseUp(e);
-                handled |= this.HandleTabDetach(e);
+                HandleTablItemMouseUpActions(e);
+                bool handled = HandleMenuGlipMouseUp(e);
+                handled |= HandleCloseButtonMouseUp(e);
+                handled |= HandleTabDetach(e);
 
                 if(!handled)
+                {
                     base.OnMouseUp(e);
+                }
             }
             catch(Exception exception)
             {
@@ -325,10 +339,10 @@ namespace TabControl
             }
             finally
             {
-                this.tabAtMouseDown = null;
-                this.mouseDownAtMenuGliph = false;
-                this.mouseDownAtCloseGliph = false;
-                this.movePreview.Hide();
+                tabAtMouseDown = null;
+                mouseDownAtMenuGliph = false;
+                mouseDownAtCloseGliph = false;
+                movePreview.Hide();
             }
         }
 
@@ -336,10 +350,11 @@ namespace TabControl
 
         private bool HandleTabDetach(MouseEventArgs e)
         {
-            bool outside = this.IsMouseOutsideHeader(e.Location);
-            if(outside && this.tabAtMouseDown != null)
+            bool outside = IsMouseOutsideHeader(e.Location);
+            
+            if(outside && tabAtMouseDown != null)
             {
-                this.FireTabItemDetach();
+                FireTabItemDetach();
                 return true;
             }
 
@@ -350,10 +365,10 @@ namespace TabControl
 
         private void FireTabItemDetach()
         {
-            if(this.TabControlItemDetach != null)
+            if(TabControlItemDetach != null)
             {
-                var args = new TabControlItemChangedEventArgs(this.tabAtMouseDown, TabControlItemChangeTypes.Changed);
-                this.TabControlItemDetach(args);
+                var args = new TabControlItemChangedEventArgs(tabAtMouseDown, TabControlItemChangeTypes.Changed);
+                TabControlItemDetach(args);
             }
         }
 
@@ -364,7 +379,7 @@ namespace TabControl
         private bool IsMouseOutsideHeader(Point location)
         {
             bool outsideY = location.Y < -MOVE_TOLERANCE || (DEF_HEADER_HEIGHT + MOVE_TOLERANCE) < location.Y;
-            bool outsideX = location.X < -MOVE_TOLERANCE || (this.Width + MOVE_TOLERANCE) < location.X;
+            bool outsideX = location.X < -MOVE_TOLERANCE || (Width + MOVE_TOLERANCE) < location.X;
             return outsideY || outsideX;
         }
 
@@ -372,9 +387,9 @@ namespace TabControl
 
         private bool HandleCloseButtonMouseUp(MouseEventArgs e)
         {
-            if(this.mouseDownAtCloseGliph && this.MouseIsOnCloseButton(e))
+            if(mouseDownAtCloseGliph && MouseIsOnCloseButton(e))
             {
-                this.CloseTab(this.SelectedItem);
+                CloseTab(SelectedItem);
                 return true;
             }
 
@@ -385,9 +400,9 @@ namespace TabControl
 
         private bool HandleMenuGlipMouseUp(MouseEventArgs e)
         {
-            if(this.mouseDownAtMenuGliph && this.MouseIsOnMenuGliph(e))
+            if(mouseDownAtMenuGliph && MouseIsOnMenuGliph(e))
             {
-                this.ShowTabsMenu();
+                ShowTabsMenu();
                 return true;
             }
 
@@ -398,13 +413,13 @@ namespace TabControl
 
         private void HandleTablItemMouseUpActions(MouseEventArgs e)
         {
-            if(this.tabAtMouseDown != null)
+            if(tabAtMouseDown != null)
             {
-                TabControlItem upItem = this.GetTabItemByPoint(e.Location);
-                if(upItem != null && upItem == this.tabAtMouseDown)
-                    this.SelectedItem = upItem;
+                TabControlItem upItem = GetTabItemByPoint(e.Location);
+                if(upItem != null && upItem == tabAtMouseDown)
+                    SelectedItem = upItem;
                 else
-                    this.SwapTabItems(e.X, upItem);
+                    SwapTabItems(e.X, upItem);
             }
         }
 
@@ -412,8 +427,8 @@ namespace TabControl
 
         private void SwapTabItems(int mouseX, TabControlItem upItem)
         {
-            int downIndex = this.items.IndexOf(this.tabAtMouseDown);
-            int newIndex = this.items.IndexOf(upItem);
+            int downIndex = items.IndexOf(tabAtMouseDown);
+            int newIndex = items.IndexOf(upItem);
 
             int upCentre = 48 + newIndex * 87;
             if(downIndex < newIndex)
@@ -427,16 +442,16 @@ namespace TabControl
                 newIndex++;
             }
 
-            if(newIndex > this.Items.Count - 1)
+            if(newIndex > Items.Count - 1)
             {
-                newIndex = this.Items.Count - 1;
+                newIndex = Items.Count - 1;
             }
             if(newIndex <= 0)
             {
                 newIndex = 0;
             }
-            this.items.Remove(this.tabAtMouseDown);
-            this.items.Insert(newIndex, this.tabAtMouseDown);
+            items.Remove(tabAtMouseDown);
+            items.Insert(newIndex, tabAtMouseDown);
         }
 
         // ------------------------------------------------
@@ -451,17 +466,17 @@ namespace TabControl
         {
             if(e.Button == MouseButtons.Left)
             {
-                this.mouseDownPoint = e.Location;
-                this.tabAtMouseDown = GetTabItemByPoint(this.mouseDownPoint);
+                mouseDownPoint = e.Location;
+                tabAtMouseDown = GetTabItemByPoint(mouseDownPoint);
 
-                if(this.MouseIsOnMenuGliph(e)) // Show Tabs menu
+                if(MouseIsOnMenuGliph(e)) // Show Tabs menu
                     mouseDownAtMenuGliph = true;
 
-                if(this.MouseIsOnCloseButton(e)) // close by click on close button
+                if(MouseIsOnCloseButton(e)) // close by click on close button
                     mouseDownAtCloseGliph = true;
             }
 
-            if(!mouseDownAtCloseGliph && !mouseDownAtMenuGliph && this.tabAtMouseDown == null)
+            if(!mouseDownAtCloseGliph && !mouseDownAtMenuGliph && tabAtMouseDown == null)
                 base.OnMouseDown(e); // custom handling
 
             Invalidate();
@@ -486,13 +501,13 @@ namespace TabControl
         private void ShowTabsMenu()
         {
             HandledEventArgs args = new HandledEventArgs(false);
-            this.OnMenuItemsLoading(args);
+            OnMenuItemsLoading(args);
             if(!args.Handled)
             {
-                this.OnMenuItemsLoad(EventArgs.Empty);
+                OnMenuItemsLoad(EventArgs.Empty);
             }
 
-            this.OnMenuShow();
+            OnMenuShow();
         }
 
         // ------------------------------------------------
@@ -569,7 +584,7 @@ namespace TabControl
             if(selectedItem == null && Items.Count > 0)
                 SelectedItem = Items[0];
 
-            for(int i = 0; i < this.Items.Count; i++)
+            for(int i = 0; i < Items.Count; i++)
             {
                 TabControlItem itm = Items[i];
                 itm.Dock = DockStyle.Fill;
@@ -580,9 +595,9 @@ namespace TabControl
 
         private void UnSelectAll()
         {
-            for(int i = 0; i < this.Items.Count; i++)
+            for(int i = 0; i < Items.Count; i++)
             {
-                TabControlItem item = this.Items[i];
+                TabControlItem item = Items[i];
                 UnSelectItem(item);
             }
         }
@@ -591,9 +606,9 @@ namespace TabControl
 
         internal void UnDrawAll()
         {
-            for(int i = 0; i < this.Items.Count; i++)
+            for(int i = 0; i < Items.Count; i++)
             {
-                this.Items[i].IsDrawn = false;
+                Items[i].IsDrawn = false;
             }
         }
 
@@ -652,13 +667,13 @@ namespace TabControl
 
         protected virtual void OnMenuItemsLoad(EventArgs e)
         {
-            menu.RightToLeft = this.RightToLeft;
+            menu.RightToLeft = RightToLeft;
             menu.Items.Clear();
             List<ToolStripMenuItem> list = new List<ToolStripMenuItem>();
             int nr = Items.Count;
             for(int i = 0; i < nr; i++)
             {
-                TabControlItem item = this.Items[i];
+                TabControlItem item = Items[i];
                 if(!item.Visible)
                     continue;
 
@@ -700,10 +715,10 @@ namespace TabControl
         {
             base.OnMouseMove(e);
 
-            this.HandleDrawMenuGliph(e);
-            this.HandleDrawCloseButton(e);
-            this.HandleMouseInTitle(e);
-            this.HandlePreviewMove(e);
+            HandleDrawMenuGliph(e);
+            HandleDrawCloseButton(e);
+            HandleMouseInTitle(e);
+            HandlePreviewMove(e);
         }
 
         // ------------------------------------------------
@@ -714,10 +729,10 @@ namespace TabControl
 
         private void HandlePreviewMove(MouseEventArgs e)
         {
-            if(this.tabAtMouseDown != null)
+            if(tabAtMouseDown != null)
             {
-                this.UpdateMovePreviewLocation(e);
-                this.ShowTabPreview(e);
+                UpdateMovePreviewLocation(e);
+                ShowTabPreview(e);
             }
         }
 
@@ -725,22 +740,22 @@ namespace TabControl
 
         private void UpdateMovePreviewLocation(MouseEventArgs e)
         {
-            Point newLocation = this.PointToScreen(e.Location);
-            newLocation.X -= this.mouseDownPoint.X;
-            newLocation.Y -= this.mouseDownPoint.Y;
-            this.movePreview.Location = newLocation;
+            Point newLocation = PointToScreen(e.Location);
+            newLocation.X -= mouseDownPoint.X;
+            newLocation.Y -= mouseDownPoint.Y;
+            movePreview.Location = newLocation;
         }
 
         // ------------------------------------------------
 
         private void ShowTabPreview(MouseEventArgs e)
         {
-            bool movedOutOfTolerance = this.MovedOutOfTolerance(e);
+            bool movedOutOfTolerance = MovedOutOfTolerance(e);
             if(movedOutOfTolerance)
             {
                 bool toDetach = IsMouseOutsideHeader(e.Location);
-                this.movePreview.UpdateDetachState(toDetach);
-                this.movePreview.Show(this.tabAtMouseDown);
+                movePreview.UpdateDetachState(toDetach);
+                movePreview.Show(tabAtMouseDown);
             }
         }
 
@@ -748,8 +763,8 @@ namespace TabControl
 
         private bool MovedOutOfTolerance(MouseEventArgs e)
         {
-            int xDelta = Math.Abs(this.mouseDownPoint.X - e.Location.X);
-            int yDelta = Math.Abs(this.mouseDownPoint.Y - e.Location.Y);
+            int xDelta = Math.Abs(mouseDownPoint.X - e.Location.X);
+            int yDelta = Math.Abs(mouseDownPoint.Y - e.Location.Y);
             bool movedOutOfTolerance = xDelta > MOVE_TOLERANCE || yDelta > MOVE_TOLERANCE;
             return movedOutOfTolerance;
         }
@@ -758,7 +773,7 @@ namespace TabControl
 
         private void HandleMouseInTitle(MouseEventArgs e)
         {
-            TabControlItem item = this.GetTabItemByPoint(e.Location);
+            TabControlItem item = GetTabItemByPoint(e.Location);
             if(item != null)
             {
                 var inTitle = item.LocationIsInTitle(e.Location);
@@ -766,18 +781,18 @@ namespace TabControl
                 if(inTitle)
                 {
                     //mouseWasOnTitle = true;
-                    this.OnTabControlMouseOnTitle(args);
-                    if(!this.mouseEnteredTitle)
+                    OnTabControlMouseOnTitle(args);
+                    if(!mouseEnteredTitle)
                     {
-                        this.mouseEnteredTitle = true;
-                        this.OnTabControlMouseEnteredTitle(args);
+                        mouseEnteredTitle = true;
+                        OnTabControlMouseEnteredTitle(args);
                     }
                 }
-                else if(this.mouseEnteredTitle) // if (mouseWasOnTitle)
+                else if(mouseEnteredTitle) // if (mouseWasOnTitle)
                 {
                     //mouseWasOnTitle = false;
-                    this.mouseEnteredTitle = false;
-                    this.OnTabControlMouseLeftTitle(args);
+                    mouseEnteredTitle = false;
+                    OnTabControlMouseLeftTitle(args);
                 }
             }
         }
@@ -786,17 +801,17 @@ namespace TabControl
 
         private void HandleDrawMenuGliph(MouseEventArgs e)
         {
-            if(this.MouseIsOnMenuGliph(e))
+            if(MouseIsOnMenuGliph(e))
             {
-                this.menuGlyph.IsMouseOver = true;
-                this.Invalidate(this.menuGlyph.Rect);
+                menuGlyph.IsMouseOver = true;
+                Invalidate(menuGlyph.Rect);
             }
             else
             {
-                if(this.menuGlyph.IsMouseOver && !this.menuOpen)
+                if(menuGlyph.IsMouseOver && !menuOpen)
                 {
-                    this.menuGlyph.IsMouseOver = false;
-                    this.Invalidate(this.menuGlyph.Rect);
+                    menuGlyph.IsMouseOver = false;
+                    Invalidate(menuGlyph.Rect);
                 }
             }
         }
@@ -805,17 +820,17 @@ namespace TabControl
 
         private void HandleDrawCloseButton(MouseEventArgs e)
         {
-            if(this.MouseIsOnCloseButton(e))
+            if(MouseIsOnCloseButton(e))
             {
-                this.closeButton.IsMouseOver = true;
-                this.Invalidate(this.closeButton.Rect);
+                closeButton.IsMouseOver = true;
+                Invalidate(closeButton.Rect);
             }
             else
             {
-                if(this.closeButton.IsMouseOver)
+                if(closeButton.IsMouseOver)
                 {
-                    this.closeButton.IsMouseOver = false;
-                    this.Invalidate(this.closeButton.Rect);
+                    closeButton.IsMouseOver = false;
+                    Invalidate(closeButton.Rect);
                 }
             }
         }
@@ -826,20 +841,20 @@ namespace TabControl
         {
             base.OnMouseLeave(e);
             menuGlyph.IsMouseOver = false;
-            this.Invalidate(menuGlyph.Rect);
+            Invalidate(menuGlyph.Rect);
 
             closeButton.IsMouseOver = false;
-            this.Invalidate(closeButton.Rect);
+            Invalidate(closeButton.Rect);
         }
 
         // ------------------------------------------------
 
         private void OnCalcTabPage(Graphics g, TabControlItem currentItem)
         {
-            Font currentFont = this.Font;
+            Font currentFont = Font;
             
             if(currentItem == SelectedItem)
-                currentFont = new Font(this.Font, FontStyle.Bold);
+                currentFont = new Font(Font, FontStyle.Bold);
 
             SizeF textSize = g.MeasureString(currentItem.Title, currentFont, new SizeF(200, 10), sf);
             textSize.Width += 20;
@@ -862,19 +877,18 @@ namespace TabControl
 
         internal void OnDrawTabPage(Graphics g, TabControlItem currentItem)
         {
-            bool isFirstTab = Items.IndexOf(currentItem) == 0;
-            Font currentFont = Font;
+            var isFirstTab = Items.IndexOf(currentItem) == 0;
+            var currentFont = Font;
 
-            if(currentItem == SelectedItem)
-                currentFont = new Font(Font, FontStyle.Bold);
+            if(currentItem == SelectedItem) { currentFont = new Font(Font, FontStyle.Bold); }
 
-            SizeF textSize = g.MeasureString(currentItem.Title, currentFont, new SizeF(200, 10), sf);
+            var textSize = g.MeasureString(currentItem.Title, currentFont, new SizeF(200, 10), sf);
             textSize.Width += 20;
-            RectangleF buttonRect = currentItem.StripRect;
+            var buttonRect = currentItem.StripRect;
 
-            GraphicsPath path = new GraphicsPath();
+            var path = new GraphicsPath();
             LinearGradientBrush brush = null;
-            int mtop = 3;
+            var mtop = 3;
 
             if(RightToLeft == RightToLeft.No)
             {
@@ -892,6 +906,7 @@ namespace TabControl
                 path.AddLine(buttonRect.Right, mtop + 2, buttonRect.Right, buttonRect.Bottom - 1);
                 path.AddLine(buttonRect.Right - 4, buttonRect.Bottom - 1, buttonRect.Left, buttonRect.Bottom - 1);
                 path.CloseFigure();
+
                 try
                 {
                     if(currentItem == SelectedItem)
@@ -905,15 +920,19 @@ namespace TabControl
                 }
                 catch(Exception)
                 {
-
+                    // Skip it
                 }
+
                 g.FillPath(brush, path);
-                Pen pen = SystemPens.ControlDark;
+                var pen = SystemPens.ControlDark;
+
                 if(currentItem == SelectedItem)
                 {
                     pen = new Pen(ToolStripRenderer.ColorTable.MenuStripGradientBegin);
                 }
+
                 g.DrawPath(pen, path);
+
                 if(currentItem == SelectedItem)
                 {
                     pen.Dispose();
@@ -924,15 +943,14 @@ namespace TabControl
                     g.DrawLine(new Pen(brush), buttonRect.Left - 9, buttonRect.Height + 2, buttonRect.Left + buttonRect.Width - 1, buttonRect.Height + 2);
                 }
 
-                PointF textLoc = new PointF(buttonRect.Left + buttonRect.Height - 4, buttonRect.Top + (buttonRect.Height / 2) - (textSize.Height / 2) - 3);
-                RectangleF textRect = buttonRect;
+                var textLoc = new PointF(buttonRect.Left + buttonRect.Height - 4, buttonRect.Top + (buttonRect.Height / 2) - (textSize.Height / 2) - 3);
+                var textRect = buttonRect;
                 textRect.Location = textLoc;
                 textRect.Width = (float)buttonRect.Width - (textRect.Left - buttonRect.Left) - 4;
                 textRect.Height = textSize.Height + currentFont.Size / 2;
 
                 if(currentItem == SelectedItem)
                 {
-                    //textRect.Y -= 2;
                     g.DrawString(currentItem.Title, currentFont, new SolidBrush(ForeColor), textRect, sf);
                 }
                 else
@@ -975,8 +993,8 @@ namespace TabControl
                     g.DrawLine(new Pen(brush), buttonRect.Right + 9, buttonRect.Height + 2, buttonRect.Right - buttonRect.Width + 1, buttonRect.Height + 2);
                 }
 
-                PointF textLoc = new PointF(buttonRect.Left + 2, buttonRect.Top + (buttonRect.Height / 2) - (textSize.Height / 2) - 2);
-                RectangleF textRect = buttonRect;
+                var textLoc = new PointF(buttonRect.Left + 2, buttonRect.Top + (buttonRect.Height / 2) - (textSize.Height / 2) - 2);
+                var textRect = buttonRect;
                 textRect.Location = textLoc;
                 textRect.Width = (float)buttonRect.Width - (textRect.Left - buttonRect.Left) - 10;
                 textRect.Height = textSize.Height + currentFont.Size / 2;
@@ -1016,9 +1034,9 @@ namespace TabControl
                 sf.FormatFlags |= StringFormatFlags.NoWrap;
                 sf.FormatFlags &= StringFormatFlags.DirectionRightToLeft;
 
-                stripButtonRect = new Rectangle(0, 0, this.ClientSize.Width - DEF_GLYPH_WIDTH - 2, 10);
-                menuGlyph.Rect = new Rectangle(this.ClientSize.Width - DEF_GLYPH_WIDTH, 2, 16, 16);
-                closeButton.Rect = new Rectangle(this.ClientSize.Width - 20, 2, 16, 15);
+                stripButtonRect = new Rectangle(0, 0, ClientSize.Width - DEF_GLYPH_WIDTH - 2, 10);
+                menuGlyph.Rect = new Rectangle(ClientSize.Width - DEF_GLYPH_WIDTH, 2, 16, 16);
+                closeButton.Rect = new Rectangle(ClientSize.Width - 20, 2, 16, 15);
             }
             else
             {
@@ -1026,8 +1044,8 @@ namespace TabControl
                 sf.FormatFlags |= StringFormatFlags.NoWrap;
                 sf.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
 
-                stripButtonRect = new Rectangle(DEF_GLYPH_WIDTH + 2, 0, this.ClientSize.Width - DEF_GLYPH_WIDTH - 15, 10);
-                menuGlyph.Rect = new Rectangle(20 + 4, 2, 16, 16);//this.ClientSize.Width - 20, 2, 16, 16);
+                stripButtonRect = new Rectangle(DEF_GLYPH_WIDTH + 2, 0, ClientSize.Width - DEF_GLYPH_WIDTH - 15, 10);
+                menuGlyph.Rect = new Rectangle(20 + 4, 2, 16, 16);//ClientSize.Width - 20, 2, 16, 16);
                 closeButton.Rect = new Rectangle(4, 2, 16, 15);//ClientSize.Width - DEF_GLYPH_WIDTH, 2, 16, 16);
             }
 
@@ -1079,11 +1097,11 @@ namespace TabControl
         {
             BeginInit();
 
-            this.SetStyle(ControlStyles.UserPaint, true);
-            this.SetStyle(ControlStyles.ResizeRedraw, true);
-            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            this.SetStyle(ControlStyles.Selectable, true);
+            SetStyle(ControlStyles.UserPaint, true);
+            SetStyle(ControlStyles.ResizeRedraw, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            SetStyle(ControlStyles.Selectable, true);
 
             items = new TabControlItemCollection(this);
             items.CollectionChanged += new CollectionChangeEventHandler(OnCollectionChanged);
@@ -1098,7 +1116,7 @@ namespace TabControl
             closeButton = new TabControlCloseButton(ToolStripRenderer);
             Font = new Font("Tahoma", 8.25f, FontStyle.Regular);
             sf = new StringFormat();
-            this.movePreview = new TabPreview(this);
+            movePreview = new TabPreview(this);
 
             EndInit();
 

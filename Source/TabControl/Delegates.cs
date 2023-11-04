@@ -11,8 +11,6 @@ namespace TabControl
         public TabControlItem Item { get; set; }
     }
 
-    #region TabControlItemClosingEventArgs
-
     public class TabControlItemClosingEventArgs : EventArgs
     {
         public TabControlItemClosingEventArgs(TabControlItem item)
@@ -36,10 +34,6 @@ namespace TabControl
         }
     }
 
-    #endregion
-
-    #region TabControlItemChangedEventArgs
-
     public class TabControlItemChangedEventArgs : EventArgs
     {
         TabControlItem itm;
@@ -61,10 +55,6 @@ namespace TabControl
             get { return itm; }
         }
     }
-
-    #endregion
-
-    #region TabControlItemChangedEventArgs
 
     public class TabControlMouseOnTitleEventArgs : EventArgs
     {
@@ -88,13 +78,10 @@ namespace TabControl
         }
     }
 
-    #endregion
-
     public delegate void TabControlItemChangedHandler(TabControlItemChangedEventArgs e);
     public delegate void TabControlItemClosingHandler(TabControlItemClosingEventArgs e);
-    public delegate void TabControlItemClosedHandler(object sender, TabControlItemClosedEventArgs e);
-    public delegate void TabControlMouseEnteredTitleHandler(TabControlMouseOnTitleEventArgs e);
     public delegate void TabControlMouseOnTitleHandler(TabControlMouseOnTitleEventArgs e);
     public delegate void TabControlMouseLeftTitleHandler(TabControlMouseOnTitleEventArgs e);
-
+    public delegate void TabControlMouseEnteredTitleHandler(TabControlMouseOnTitleEventArgs e);
+    public delegate void TabControlItemClosedHandler(object sender, TabControlItemClosedEventArgs e);
 }

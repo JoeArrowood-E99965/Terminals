@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TabControl
 {
     /// <summary>
     /// Theme Type
     /// </summary>
+    
     public enum ThemeTypes
     {
         WindowsXP,
@@ -17,6 +15,7 @@ namespace TabControl
     /// <summary>
     /// Indicates a change into TabControl collection
     /// </summary>
+    
     public enum TabControlItemChangeTypes
     {
         Added,
